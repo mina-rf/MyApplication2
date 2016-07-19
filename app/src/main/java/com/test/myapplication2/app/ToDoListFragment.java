@@ -3,8 +3,6 @@ package com.test.myapplication2.app;
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
 import android.database.Cursor;
-import android.graphics.ColorMatrixColorFilter;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.annotation.Nullable;
@@ -39,8 +37,9 @@ public class ToDoListFragment  extends Fragment implements View.OnClickListener 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         Log.d("context menu", "onCreateContextMenu ");
-//        super.onCreateContextMenu(menu, v, menuInfo);
+        super.onCreateContextMenu(menu, v, menuInfo);
         menu.add(0 , v.getId(),0,R.string.delete_task);
+        menu.add(0 , v.getId() ,0 , "Edit");
         Log.d("context menu", "onCreateContextMenu ");
 
     }
@@ -51,13 +50,14 @@ public class ToDoListFragment  extends Fragment implements View.OnClickListener 
         AdapterView.AdapterContextMenuInfo info  =  (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
 
         if (item.getTitle().equals((getActivity().getString(R.string.delete_task)))){
+            TextView tv = (TextView) info.targetView.findViewById(R.id.task_name_inlist);
+            tasksDB.deleteTask(tv.getText().toString());
+            ((ViewPager)getActivity().findViewById(R.id.pager)).getAdapter().notifyDataSetChanged();
             return true;
         }
         else if (item.getTitle().equals((getActivity().getString(R.string.edit_task)))){
 
-
             return true;
-
         }
         else
             return super.onContextItemSelected(item);
@@ -99,7 +99,7 @@ public class ToDoListFragment  extends Fragment implements View.OnClickListener 
         Log.d("seda shod!", "onCreateView ");
         //draw Views
         list.removeAll(list);
-        Cursor c = tasksDB.getAllPersons();
+        Cursor c = tasksDB.getAllTasks();
         if (c .moveToFirst()) {
 
             while (c.isAfterLast() == false) {

@@ -12,6 +12,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class TasksDBHelper extends SQLiteOpenHelper {
     public static final String DATABASE_NAME = "Tasks.db";
     private static final int DATABASE_VERSION = 1;
+
     public static final String TASK_TABLE_NAME = "tasks";
     public static final String TASK_COLUMN_NAME = "name";
     public static final String TASK_COLUMN_DEADLINE_YEAR = "deadline_year";
@@ -23,6 +24,11 @@ public class TasksDBHelper extends SQLiteOpenHelper {
     public static final String TASK_COLUMN_TAG = "tag";
     public static final String TASK_COLUMN_TARGET = "target";
     public static final String TASK_COLUMN_DONE = "done";
+
+    public static  final String POMODORO_TABLE_NAME = "pomodoros";
+    public static final String POMODORO_COLUMN_NUMBER =  "number";
+    public static final String POMODORO_COLUMN_DATE = "Data";
+
 
 
     public TasksDBHelper(Context context) {
@@ -43,6 +49,13 @@ public class TasksDBHelper extends SQLiteOpenHelper {
                 TASK_COLUMN_DONE + " INTEGER, " +
                 TASK_COLUMN_TAG + " INTEGER)"
         );
+
+        sqLiteDatabase.execSQL("CREATE TABLE " + POMODORO_TABLE_NAME + "(" +
+                POMODORO_COLUMN_DATE + " TEXT PRIMARY KEY, " +
+                POMODORO_COLUMN_NUMBER + " INTEGER)"
+        );
+
+
     }
 
     @Override
@@ -91,7 +104,7 @@ public class TasksDBHelper extends SQLiteOpenHelper {
 
     public boolean addDone (String name){
         ContentValues cv = new ContentValues();
-        Cursor c = getPerson(name);
+        Cursor c = getTask(name);
         if (c .moveToFirst()) {
             cv.put(TASK_COLUMN_DONE, c.getInt(c.getColumnIndex(TasksDBHelper.TASK_COLUMN_DONE)) + 1);
             System.out.println("done : " +(c.getInt(c.getColumnIndex(TasksDBHelper.TASK_COLUMN_DONE))));
@@ -100,7 +113,7 @@ public class TasksDBHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = getWritableDatabase();
         db.update(TASK_TABLE_NAME, cv, TASK_COLUMN_NAME + "= ?", new String[] {name});
 
-        c = getPerson(name);
+        c = getTask(name);
         if (c .moveToFirst()) {
             System.out.println("done : " +(c.getInt(c.getColumnIndex(TasksDBHelper.TASK_COLUMN_DONE)) ));
         }
@@ -109,24 +122,64 @@ public class TasksDBHelper extends SQLiteOpenHelper {
 
 
 
-    public Cursor getPerson(String name) {
+    public Cursor getTask(String name) {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor res = db.rawQuery( "SELECT * FROM " + TASK_TABLE_NAME + " WHERE " +
                 TASK_COLUMN_NAME + "=?", new String[] { name } );
         return res;
     }
-    public Cursor getAllPersons() {
+    public Cursor getAllTasks() {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor res = db.rawQuery( "SELECT * FROM " + TASK_TABLE_NAME, null );
         return res;
     }
 
-    public Integer deletePerson(String name) {
+    public Integer deleteTask(String name) {
         SQLiteDatabase db = this.getWritableDatabase();
         return db.delete(TASK_TABLE_NAME,
                 TASK_COLUMN_NAME + " = ? ",
                 new String[] { name });
     }
+
+    public boolean insertDayStat(String date , Integer number){
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put(POMODORO_COLUMN_DATE ,date );
+        cv.put(POMODORO_COLUMN_NUMBER,number);
+        db.insert(POMODORO_TABLE_NAME , null , cv);
+        return true;
+    }
+
+    public boolean addPomodoroInData (String date){
+        ContentValues cv = new ContentValues();
+        Cursor c = getTask(date);
+        if (c .moveToFirst()) {
+            cv.put(POMODORO_TABLE_NAME, c.getInt(c.getColumnIndex(TasksDBHelper.POMODORO_COLUMN_NUMBER)) + 1);
+        }
+
+        SQLiteDatabase db = getWritableDatabase();
+        db.update(POMODORO_TABLE_NAME, cv, POMODORO_COLUMN_DATE + "= ?", new String[] {date});
+
+        return true;
+    }
+
+    public Cursor getStatInDate (String date){
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res = db.rawQuery( "SELECT * FROM " + POMODORO_TABLE_NAME + " WHERE " +
+                POMODORO_COLUMN_DATE + "=?", new String[] { date } );
+        return res;
+
+    }
+
+    public int getNumberOfPomodoroInDate (String date){
+        Cursor c = getStatInDate(date);
+        ContentValues cv = new ContentValues();
+        if (c.moveToFirst())
+            return c.getInt(c.getColumnIndex(POMODORO_COLUMN_DATE));
+        return 0;
+    }
+
+
 
 
 

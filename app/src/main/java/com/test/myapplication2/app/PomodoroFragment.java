@@ -1,7 +1,9 @@
 package com.test.myapplication2.app;
 
 import android.content.*;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
@@ -12,6 +14,8 @@ import android.view.*;
 import android.widget.Button;
 import android.widget.Toast;
 import de.greenrobot.event.*;
+
+import java.util.Calendar;
 
 public class PomodoroFragment extends Fragment implements View.OnClickListener {
     Button button;
@@ -112,13 +116,31 @@ public class PomodoroFragment extends Fragment implements View.OnClickListener {
         if (angle == 360) {
             isBreak = intent.getBooleanExtra("isBreak", false);
             breakOrWork();
-            if (taskName != null) {
-                TasksDBHelper db = new TasksDBHelper(getActivity());
-                db.addDone(taskName);
-                ((ViewPager)getActivity().findViewById(R.id.pager)).getAdapter().notifyDataSetChanged();
-                taskName = null;
-            }
 
+            UpdateDB();
+
+        }
+    }
+
+    private void UpdateDB() {
+        TasksDBHelper db = new TasksDBHelper(getActivity());
+
+        Calendar now = Calendar.getInstance();
+        int year = now.get(Calendar.YEAR);
+        int month = now.get(Calendar.MONTH);
+        int day = now.get(Calendar.DAY_OF_MONTH);
+        String date =year+"-"+month+"-"+day;
+        Cursor c = db.getStatInDate(date);
+        if (c.moveToFirst()){
+            db.addDone(date);
+        }
+        else{
+            db.insertDayStat(date,1);
+        }
+        if (taskName != null) {
+            db.addDone(taskName);
+            ((ViewPager)getActivity().findViewById(R.id.pager)).getAdapter().notifyDataSetChanged();
+            taskName = null;
         }
     }
 
