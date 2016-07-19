@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+    <org.eazegraph.lib.charts.BarChart
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/barchart"
+            android:layout_width="match_parent"
+            android:layout_height="256dp"
+            android:padding="10dp"
+            app:egFixedBarWidth="true"
+            app:egBarWidth="20dp"
+            app:egLegendHeight="40dp"/>
+
+    <android.support.design.widget.TabLayout.TabView android:layout_width="@dimen/abc_action_bar_content_inset_material"
+                                                     android:layout_height="@dimen/abc_action_bar_content_inset_material"></android.support.design.widget.TabLayout.TabView>
+
+</LinearLayout>

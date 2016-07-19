@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="tabs">
+        <item>Pomodoro</item>
+        <item>ToDoList</item>
+        <item>Statistics</item>
+        <item>Setting</item>
+    </string-array>
+
+    <string-array name="colors">
+        <item>Red</item>
+        <item>Orange</item>
+        <item>Yellow</item>
+        <item>Green</item>
+        <item>Blue</item>
+        <item>Violet</item>
+    </string-array>
+</resources>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto"
+>
+    <PreferenceCategory
+            android:title="@string/pomodoro_preferences">
+        <com.test.myapplication2.app.NumberPickerPreference
+                android:key="work_interval"
+                android:title="@string/work_interval"
+                android:dialogTitle="@string/work_interval"
+                android:defaultValue="5"
+                app:min="20"
+                app:max="80"
+        />
+        <com.test.myapplication2.app.NumberPickerPreference
+                android:key="short_break"
+                android:title="@string/short_break"
+                android:dialogTitle="@string/short_break"
+                android:defaultValue="1"
+                app:min="3"
+                app:max="10"
+        />
+        <com.test.myapplication2.app.NumberPickerPreference
+                android:key="long_break"
+                android:title="@string/long_break"
+                android:dialogTitle="@string/long_break"
+                android:defaultValue="3"
+                app:min="15"
+                app:max="30"
+        />
+        <com.test.myapplication2.app.NumberPickerPreference
+                android:key="breaks_num"
+                android:title="Long break after:"
+                android:dialogTitle="Long break after:"
+                android:defaultValue="2"
+                app:min="3"
+                app:max="6"
+        />
+
+
+    </PreferenceCategory>
+
+    <PreferenceCategory>
+        <CheckBoxPreference
+                android:key="playing"
+                android:title="play sound"
+                android:defaultValue="true"
+        />
+        <RingtonePreference
+                android:key="ringtone"
+                android:title="ringtone"
+                android:showDefault="true"
+                android:ringtoneType="alarm"
+                android:dependency="playing"
+        />
+    </PreferenceCategory>
+
+</PreferenceScreen>
