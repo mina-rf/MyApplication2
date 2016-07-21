@@ -7,10 +7,6 @@
     <NumberPicker
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/numberPicker"/>
-    <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Ok"
-            android:id="@+id/button"/>
+            android:id="@+id/numberPicker" android:layout_gravity="center"/>
+
 </LinearLayout>

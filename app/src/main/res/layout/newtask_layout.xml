@@ -2,57 +2,53 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
              android:orientation="vertical"
              android:layout_width="match_parent"
-             android:layout_height="match_parent" android:clickable="true">
+             android:layout_height="match_parent" android:clickable="true" android:background="#fafafa">
 
     <ScrollView
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:id="@+id/scrollView2">
+            android:id="@+id/scrollView2" android:background="#f5f5f5">
         <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent" android:id="@+id/new_layout">
             <LinearLayout
                     android:orientation="vertical"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
-                <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Task Name :    "
-                        android:id="@+id/textView"/>
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/abc_action_bar_content_inset_material" android:background="#ffffff"
+            >
                 <EditText
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:id="@+id/task_name" android:autoText="false"
-                        android:hint="Write your task name here ..."/>
+                        android:hint="Title"
+                        android:textSize="@dimen/abc_action_button_min_width_overflow_material"
+                        android:layout_marginLeft="@dimen/abc_action_bar_content_inset_material"/>
             </LinearLayout>
-            <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@android:color/darker_gray"/>
             <LinearLayout
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="match_parent"
+                    android:layout_margin="@dimen/abc_action_bar_content_inset_material" android:background="#ffffff">
                 <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Target Intervals :   "
-                        android:id="@+id/textView10" android:layout_gravity="center" android:singleLine="true"/>
+                        android:id="@+id/textView10" android:layout_gravity="center" android:singleLine="true"
+                        android:textSize="@dimen/abc_action_bar_content_inset_material"
+                        android:layout_marginLeft="@dimen/abc_action_bar_content_inset_material"/>
                 <EditText
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:id="@+id/target_picker" android:hint="Tap to choose"/>
+                        android:id="@+id/target_picker" android:hint="5"
+                        android:textSize="@dimen/abc_action_bar_content_inset_material"/>
             </LinearLayout>
-            <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@android:color/darker_gray"/>
             <LinearLayout
                     android:orientation="vertical"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="match_parent"
+                    android:layout_margin="@dimen/abc_action_bar_content_inset_material" android:background="#ffffff">
                 <LinearLayout
                         android:orientation="horizontal"
                         android:layout_width="match_parent"
@@ -61,31 +57,37 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Tag :  "
-                            android:id="@+id/textView12"/>
+                            android:id="@+id/textView12"
+                            android:textSize="@dimen/abc_action_bar_content_inset_material"
+                            android:layout_gravity="center"
+                            android:layout_marginLeft="@dimen/abc_action_bar_content_inset_material"/>
                     <Spinner
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:id="@+id/task_tag"/>
+                            android:id="@+id/task_tag" android:spinnerMode="dropdown"
+                            android:focusable="true" android:longClickable="false"/>
                 </LinearLayout>
-                <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Description:  "
-                        android:id="@+id/textView5" android:singleLine="false"/>
                 <EditText
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:id="@+id/task_description" android:hint="Write your task description here ..."/>
+                        android:id="@+id/task_description" android:hint="More Description"
+                        android:textSize="@dimen/abc_action_bar_content_inset_material"
+                        android:layout_marginBottom="@dimen/abc_action_bar_content_inset_material"
+                        android:layout_marginLeft="@dimen/abc_action_bar_content_inset_material"/>
             </LinearLayout>
 
-            <View
+            <LinearLayout
+                    android:orientation="vertical"
                     android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@android:color/darker_gray"/>
-            <EditText
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/data_picker" android:hint="Tap to choose"/>
+                    android:layout_height="match_parent" android:id="@+id/newtask_layout" android:background="#ffffff"
+                    android:layout_margin="@dimen/abc_action_bar_content_inset_material">
+                <CheckBox
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Remind me near deadline"
+                        android:id="@+id/have_deadline"
+                        android:layout_marginLeft="@dimen/abc_action_bar_content_inset_material"/>
+            </LinearLayout>
 
 
             <RelativeLayout
