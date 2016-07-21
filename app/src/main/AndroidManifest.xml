@@ -7,8 +7,7 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/MyAppTheme" >
-        <service android:name=".TimerService"
-                 android:process=":timerProcess"/>
+        <service android:name=".TimerService"/>
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name" >

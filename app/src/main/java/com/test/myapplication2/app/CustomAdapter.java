@@ -5,6 +5,7 @@ package com.test.myapplication2.app;
  */
 
 import android.content.Context;
+import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
@@ -13,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import de.greenrobot.event.EventBus;
 
@@ -64,7 +66,7 @@ public class CustomAdapter extends BaseAdapter  {
 
             holder.taskName = (TextView) convertView.findViewById(R.id.task_name_inlist);
             holder.targetAndDone = (TextView) convertView.findViewById(R.id.task_target_done);
-            holder.start = (Button) convertView.findViewById(R.id.task_start);
+            holder.start = (ImageButton) convertView.findViewById(R.id.task_start);
             holder.label = (Button) convertView.findViewById(R.id.task_label);
             pager = (ViewPager) convertView.findViewById(R.id.pager);
 
@@ -78,25 +80,24 @@ public class CustomAdapter extends BaseAdapter  {
         holder.taskName.setText(textitems.get(position).taskName);
         holder.targetAndDone.setText(textitems.get(position).done + " / " + textitems.get(position).target);
         holder.label.setBackgroundColor(textitems.get(position).color);
+//        holder.start.setBackgroundResource(R.mipmap.ic_play_grey600_48dp);
 
-        Drawable drawable = convertView.getResources().getDrawable(R.drawable.play);
-        drawable.setBounds(0, 0,100,
-                100 );
-        holder.start.setCompoundDrawables(null, drawable, null, null); //set drawab
+        if (textitems.get(position).target <= textitems.get(position).done){
+            holder.start.setBackgroundResource(R.mipmap.ic_checkbox_marked_circle_outline_grey600_36dp);
+            holder.taskName.setPaintFlags(holder.taskName.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+        }
+        else{
+            holder.start.setBackgroundResource(R.mipmap.ic_play_grey600_36dp);
+        }
+
+
 
         holder.start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-//                mListAdapterListener.onClickAtOKButton(position);
-                Log.d("start!", "onClick ");
-                Drawable drawable = view.getResources().getDrawable(R.drawable.stop);
-                drawable.setBounds(0, 0, 100 ,
-                        100);
-//                pager.setCurrentItem(0);
                 EventBus bus = EventBus.getDefault();
                 bus.post(new StartTaskEvent(textitems.get(pos).taskName));
-                holder.start.setCompoundDrawables(null,drawable, null, null); //set drawab
 
             }
         });
@@ -108,7 +109,7 @@ public class CustomAdapter extends BaseAdapter  {
     class ViewHolder {
         TextView taskName;
         TextView targetAndDone;
-        Button start;
+        ImageButton start;
         Button label;
     }
 }

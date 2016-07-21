@@ -52,7 +52,7 @@ public class TabsPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public CharSequence getPageTitle(int position) {
-        String[] tabs = {"Pomodoro","ToDoList","Statistics","Setting"};
+        String[] tabs = {"","","",""};
         return tabs[position];
     }
 

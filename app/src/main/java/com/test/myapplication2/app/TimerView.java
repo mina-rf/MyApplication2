@@ -8,23 +8,28 @@ import android.graphics.Paint;
 import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 
 /**
  * Created by mina on 7/9/16.
  */
-public class TimerView extends View {
+public class TimerView extends View  {
 
     String time;
     int angle;
     int width;
     int height;
+    int r;
 
     public TimerView(Context context, AttributeSet attrs) {
         super(context, attrs);
         time = "25:00";
         angle = 0;
+        setFocusable(true);
+        setClickable(true);
     }
+
 
     public void setAngle(int angle) {
         this.angle = angle;
@@ -74,7 +79,7 @@ public class TimerView extends View {
         p.setColor(Color.WHITE);
         final RectF oval = new RectF();
 
-        int r = width / 3;
+        r = width / 3;
         int leftx = width / 2 - r;
         int rightx = width / 2 + r;
         int topy = height / 2 - r;
@@ -88,7 +93,7 @@ public class TimerView extends View {
         canvas.drawArc(oval, 270 + angle, 360 - angle, false, p);
 
         Paint textPaint = new Paint();
-        textPaint.setColor(Color.MAGENTA);
+        textPaint.setColor(Color.WHITE);
         textPaint.setTextAlign(Paint.Align.CENTER);
         float size = r / 2;
         textPaint.setTextSize(size);
@@ -98,4 +103,15 @@ public class TimerView extends View {
 
     }
 
+    public int getRadious(){
+        return r;
+    }
+
+    public int getCenterX(){
+        return width/2;
+    }
+
+    public int getCenterY(){
+        return height/2;
+    }
 }

@@ -14,6 +14,11 @@
             app:egLegendHeight="40dp"/>
 
     <android.support.design.widget.TabLayout.TabView android:layout_width="@dimen/abc_action_bar_content_inset_material"
-                                                     android:layout_height="@dimen/abc_action_bar_content_inset_material"></android.support.design.widget.TabLayout.TabView>
+                                                     android:layout_height="@dimen/abc_action_bar_content_inset_material"
+    ></android.support.design.widget.TabLayout.TabView>
+    <DatePicker
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/datePicker" android:datePickerMode="spinner" android:spinnersShown="true"/>
 
 </LinearLayout>

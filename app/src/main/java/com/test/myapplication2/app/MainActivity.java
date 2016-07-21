@@ -49,6 +49,14 @@ public class MainActivity extends AppCompatActivity{
         TabLayout tabLayout = (TabLayout) findViewById(R.id.sliding_tabs);
         tabLayout.setupWithViewPager(viewPager);
 
+        tabLayout.getTabAt(0).setIcon(R.mipmap.ic_alarm_check_grey600_24dp);
+        tabLayout.getTabAt(1).setIcon(R.mipmap.ic_calendar_check_grey600_24dp);
+        tabLayout.getTabAt(2).setIcon(R.mipmap.ic_chart_bar_grey600_24dp);
+        tabLayout.getTabAt(3).setIcon(R.mipmap.ic_tune_grey600_24dp);
+
+        tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
+
+
         toolbar = (Toolbar) findViewById(R.id.tool_bar); // Attaching the layout to the toolbar object
         setSupportActionBar(toolbar);
 

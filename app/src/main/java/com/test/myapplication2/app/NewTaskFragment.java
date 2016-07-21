@@ -3,20 +3,26 @@ package com.test.myapplication2.app;
 
 //import android.support.v4.app.Fragment;
 //import android.support.v4.app.FragmentTransaction;
+import android.app.DatePickerDialog;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.app.SharedElementCallback;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.ColorInt;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.text.InputType;
 import android.util.Log;
 import android.view.*;
 import android.widget.*;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 
 /**
@@ -36,6 +42,10 @@ public class NewTaskFragment extends Fragment implements AdapterView.OnItemSelec
     EditText description;
     Button addTask;
 
+    EditText date;
+    DatePickerDialog dateDialoge;
+    SimpleDateFormat dateFormat ;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         setHasOptionsMenu(true);
@@ -49,10 +59,34 @@ public class NewTaskFragment extends Fragment implements AdapterView.OnItemSelec
 
         View view = inflater.inflate(R.layout.newtask_layout, container, false);
         initialize(view);
+        date = (EditText) view.findViewById(R.id.data_picker);
+        dateFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.US);
+        date.requestFocus();
+        date.setInputType(InputType.TYPE_NULL);
         addTask.setOnClickListener(this);
+        setDateTimeField();
         return view;
 
     }
+
+
+    private void setDateTimeField() {
+        date.setOnClickListener(this);
+        System.out.println("listner set");
+        Calendar newCalendar = Calendar.getInstance();
+        dateDialoge = new DatePickerDialog(getActivity(), new DatePickerDialog.OnDateSetListener() {
+
+            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                Calendar newDate = Calendar.getInstance();
+                newDate.set(year, monthOfYear, dayOfMonth);
+                date.setText(dateFormat.format(newDate.getTime()));
+            }
+
+        },newCalendar.get(Calendar.YEAR), newCalendar.get(Calendar.MONTH), newCalendar.get(Calendar.DAY_OF_MONTH));
+
+
+    }
+
 
     private void initialize(View view) {
 
@@ -131,6 +165,11 @@ public class NewTaskFragment extends Fragment implements AdapterView.OnItemSelec
             transaction.commit();
 
 
+        }
+
+        else  if (view.getId() == R.id.data_picker){
+            System.out.println("date pickeeer");
+            dateDialoge.show();
         }
     }
 
@@ -218,6 +257,8 @@ public class NewTaskFragment extends Fragment implements AdapterView.OnItemSelec
         inflater.inflate(R.menu.setting_menu,menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
+
+
 }
 
 

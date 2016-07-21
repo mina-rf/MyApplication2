@@ -6,12 +6,14 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import java.util.Calendar;
+
 /**
  * Created by mina on 7/13/16.
  */
 public class TasksDBHelper extends SQLiteOpenHelper {
-    public static final String DATABASE_NAME = "Tasks.db";
-    private static final int DATABASE_VERSION = 1;
+    public static final String DATABASE_NAME = "Data.db";
+    private static final int DATABASE_VERSION = 2;
 
     public static final String TASK_TABLE_NAME = "tasks";
     public static final String TASK_COLUMN_NAME = "name";
@@ -50,10 +52,13 @@ public class TasksDBHelper extends SQLiteOpenHelper {
                 TASK_COLUMN_TAG + " INTEGER)"
         );
 
+
         sqLiteDatabase.execSQL("CREATE TABLE " + POMODORO_TABLE_NAME + "(" +
                 POMODORO_COLUMN_DATE + " TEXT PRIMARY KEY, " +
                 POMODORO_COLUMN_NUMBER + " INTEGER)"
         );
+
+
 
 
     }
@@ -152,9 +157,9 @@ public class TasksDBHelper extends SQLiteOpenHelper {
 
     public boolean addPomodoroInData (String date){
         ContentValues cv = new ContentValues();
-        Cursor c = getTask(date);
+        Cursor c = getStatInDate(date);
         if (c .moveToFirst()) {
-            cv.put(POMODORO_TABLE_NAME, c.getInt(c.getColumnIndex(TasksDBHelper.POMODORO_COLUMN_NUMBER)) + 1);
+            cv.put(POMODORO_COLUMN_NUMBER, c.getInt(c.getColumnIndex(TasksDBHelper.POMODORO_COLUMN_NUMBER)) + 1);
         }
 
         SQLiteDatabase db = getWritableDatabase();
@@ -171,11 +176,14 @@ public class TasksDBHelper extends SQLiteOpenHelper {
 
     }
 
-    public int getNumberOfPomodoroInDate (String date){
+    public int getNumberOfPomodoroInDate (int year , int month , int day){
+
+        String date = year+"-"+month+"-"+day;
+
         Cursor c = getStatInDate(date);
         ContentValues cv = new ContentValues();
         if (c.moveToFirst())
-            return c.getInt(c.getColumnIndex(POMODORO_COLUMN_DATE));
+            return c.getInt(c.getColumnIndex(POMODORO_COLUMN_NUMBER));
         return 0;
     }
 

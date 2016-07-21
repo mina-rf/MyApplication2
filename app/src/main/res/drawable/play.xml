@@ -1,11 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
-<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <item
-            android:id="@+id/half_overlay"
-            android:drawable="@mipmap/play_icon"
-            android:width="10dp"
-            android:height="10dp"
-    />
-
-</layer-list>
+<!-- drawable/play.xml -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:height="30dp"
+    android:width="30dp"
+    android:viewportWidth="300"
+    android:viewportHeight="300">
+    <path android:fillColor="#00FF00" android:pathData="M8,5.14V19.14L19,12.14L8,5.14Z" />
+</vector>

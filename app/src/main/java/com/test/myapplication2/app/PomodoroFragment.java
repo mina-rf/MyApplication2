@@ -9,6 +9,7 @@ import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.*;
 import android.widget.Button;
@@ -17,7 +18,7 @@ import de.greenrobot.event.*;
 
 import java.util.Calendar;
 
-public class PomodoroFragment extends Fragment implements View.OnClickListener {
+public class PomodoroFragment extends Fragment implements View.OnClickListener,View.OnTouchListener {
     Button button;
     TimerView timerView;
     long workTime = 4 * 1000;
@@ -78,10 +79,11 @@ public class PomodoroFragment extends Fragment implements View.OnClickListener {
         timerView = (TimerView) view.findViewById(R.id.timeView);
 
         button.setOnClickListener(this);
-
+        timerView.setOnTouchListener(this);
         //read the value of Pomodoro from Shared Preferences
         setValues();
         breakOrWork();
+
         return view;
 
     }
@@ -129,10 +131,12 @@ public class PomodoroFragment extends Fragment implements View.OnClickListener {
         int year = now.get(Calendar.YEAR);
         int month = now.get(Calendar.MONTH);
         int day = now.get(Calendar.DAY_OF_MONTH);
+
         String date =year+"-"+month+"-"+day;
         Cursor c = db.getStatInDate(date);
+
         if (c.moveToFirst()){
-            db.addDone(date);
+            db.addPomodoroInData(date) ;
         }
         else{
             db.insertDayStat(date,1);
@@ -179,6 +183,26 @@ public class PomodoroFragment extends Fragment implements View.OnClickListener {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_main,menu);
         super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onTouch(View view, MotionEvent motionEvent) {
+        int x = timerView.getCenterX();
+        int y = timerView.getCenterY();
+        int r = timerView.getRadious();
+
+        if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+
+            if (Math.sqrt((x - motionEvent.getX()) * (x - motionEvent.getX()) + (y - motionEvent.getY()) * (y - motionEvent.getY())) < r) {
+                System.out.println("circle clicked");
+                //TODO: call method declared
+                timerClicked();
+            }
+        }
+        return true;
+    }
+
+    private void timerClicked() {
     }
 
 }
