@@ -10,6 +10,7 @@ import android.os.CountDownTimer;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
+import android.support.annotation.StringDef;
 import android.util.Log;
 
 /**
@@ -17,23 +18,21 @@ import android.util.Log;
  * Completed by melika :)
  */
 public class TimerService extends Service {
+    public static final String MY_SERVICE = "it.unibz.bluedroid.bluetooth.service.MY_SERVICE";
 
     public static final String BROADCAST_TIME = "com.test.myapplication2.app.displayevent";
     Intent myintent;
     CountDownTimer timer;
     boolean isBreak;
     int num;
+    boolean isRunnig;
 
-    @Override
-    public void onTaskRemoved(Intent rootIntent) {
-        super.onTaskRemoved(rootIntent);
-    }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
         System.out.println("service started");
-        long time = intent.getLongExtra("time", 0);
+        long time = intent.getLongExtra("time", 0L);
         isBreak = intent.getBooleanExtra("isBreak", false);
         num = intent.getIntExtra("num", 0);
 
@@ -46,6 +45,7 @@ public class TimerService extends Service {
                 myintent.putExtra("counter", l);
                 sendBroadcast(myintent);
                 updateNotification(l);
+                isRunnig = true;
             }
 
             @Override
@@ -54,6 +54,7 @@ public class TimerService extends Service {
                 isBreak = !isBreak;
                 myintent.putExtra("isBreak", isBreak);
                 sendBroadcast(myintent);
+                isRunnig = false;
                 finishedNotification();
                 stopSelf();
 
@@ -69,6 +70,7 @@ public class TimerService extends Service {
         Intent startIntent = new Intent(this, MainActivity.class);
         startIntent.putExtra("salam", isBreak);
         startIntent.putExtra("num", num);
+        startIntent.putExtra("run", isRunnig);
         PendingIntent pIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), startIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         return new Notification.Builder(this)
                 .setSmallIcon(R.mipmap.ic_launcher)
@@ -86,16 +88,17 @@ public class TimerService extends Service {
         Uri uri = null;
 
 //        if (getAlarms.getBoolean("playing", true)) {
-            String alarms = getAlarms.getString("ringtone", "default ringtone");
-            System.out.println(alarms);
-            uri = Uri.parse(alarms);
+        String alarms = getAlarms.getString("ringtone", "default ringtone");
+        System.out.println(alarms);
+        uri = Uri.parse(alarms);
 //        }
 //        Uri alarmUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
 //        if (alarmUri == null) {
 //            alarmUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 //        }
+        String text = isBreak ? "Time to take a break" : "Time to work";
 
-        Notification notification = getNotification("Time to take a break!", uri);
+        Notification notification = getNotification(text, uri);
 
         notification.flags = Notification.DEFAULT_LIGHTS | Notification.FLAG_AUTO_CANCEL;
         NotificationManager mNotificationManager = (NotificationManager) getSystemService(MainActivity.NOTIFICATION_SERVICE);
@@ -111,6 +114,9 @@ public class TimerService extends Service {
 
     @Override
     public void onDestroy() {
+        System.out.println("stopped!");
+        timer.cancel();
+        stopSelf();
         super.onDestroy();
     }
 

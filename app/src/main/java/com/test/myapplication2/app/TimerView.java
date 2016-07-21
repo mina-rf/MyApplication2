@@ -24,7 +24,7 @@ public class TimerView extends View  {
 
     public TimerView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        time = "25:00";
+        time = "Start!";
         angle = 0;
         setFocusable(true);
         setClickable(true);
@@ -76,10 +76,10 @@ public class TimerView extends View  {
 //        super.onDraw(canvas);
         Paint p = new Paint();
         p.setStyle(Paint.Style.STROKE);
-        p.setColor(Color.WHITE);
+        p.setColor(getResources().getColor(R.color.primary_light));
         final RectF oval = new RectF();
 
-        r = width / 3;
+        r = 2 * width / 5;
         int leftx = width / 2 - r;
         int rightx = width / 2 + r;
         int topy = height / 2 - r;
@@ -87,17 +87,17 @@ public class TimerView extends View  {
 
         oval.set(leftx, topy, rightx, bottomy);
 //        angle = 90;
-        p.setStrokeWidth(10);
+        p.setStrokeWidth(width/70);
         canvas.drawArc(oval, 270, angle, false, p);
-        p.setColor(Color.BLUE);
+        p.setColor(getResources().getColor(R.color.primary_dark));
         canvas.drawArc(oval, 270 + angle, 360 - angle, false, p);
 
         Paint textPaint = new Paint();
-        textPaint.setColor(Color.WHITE);
+//        textPaint.setColor(getResources().getColor(R.color.secondary_text_material_light));
         textPaint.setTextAlign(Paint.Align.CENTER);
-        float size = r / 2;
+        float size = r / 3;
         textPaint.setTextSize(size);
-        canvas.drawText(time, width / 2, height / 2 + size / 4, textPaint);
+        canvas.drawText(time, width / 2, height / 2 + size / 3 , textPaint);
 //        canvas.drawText("salam",50 , 50 , p);
 //        Log.d("TAG", "onDraw end ");
 

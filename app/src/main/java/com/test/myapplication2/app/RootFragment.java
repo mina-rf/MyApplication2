@@ -28,8 +28,10 @@ public class RootFragment extends Fragment{
 //        toDoListFragment.setArguments(savedInstanceState);
         transaction.replace(R.id.root_frame, toDoListFragment);
 
-        transaction.commit();
+        transaction.commitAllowingStateLoss();
 
         return view;
     }
+
+
 }

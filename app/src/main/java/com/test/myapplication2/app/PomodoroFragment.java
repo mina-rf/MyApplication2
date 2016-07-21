@@ -14,51 +14,54 @@ import android.util.Log;
 import android.view.*;
 import android.widget.Button;
 import android.widget.Toast;
+
 import de.greenrobot.event.*;
 
+import java.sql.Time;
 import java.util.Calendar;
 
-public class PomodoroFragment extends Fragment implements View.OnClickListener,View.OnTouchListener {
-    Button button;
+public class PomodoroFragment extends Fragment implements View.OnClickListener, View.OnTouchListener {
+
     TimerView timerView;
-    long workTime = 4 * 1000;
+    long workTime = 10 * 1000;
     long shortBreakTime = 5 * 1000;
     long longBreakTime = 7 * 1000;
     long time;
     int breaksInRow = 2;
     int breaksNum;
     boolean isBreak;
+    boolean isRunning;
     String taskName = null;
     EventBus bus = EventBus.getDefault();
+    Intent intent;
 
     @Override
     public void onClick(View view) {
 
-        if (view.getId() == R.id.button2) {
-            //starting the foreground service
-            Log.d("start button", "onClick ");
-            //TODO: check if another service is running by that time!
-            startTimerService();
-        }
     }
 
     private void startTimerService() {
-        Intent intent = new Intent(getActivity(), TimerService.class);
         intent.setAction("");
         intent.putExtra("time", time);
         intent.putExtra("isBreak", isBreak);
         intent.putExtra("num", breaksNum);
         getActivity().startService(intent);
+        isRunning = true;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         //registering broadcast receiver
         getActivity().registerReceiver(broadcastReceiver, new IntentFilter(TimerService.BROADCAST_TIME));
+        intent = new Intent(getActivity(),TimerService.class);
         isBreak = getActivity().getIntent().getBooleanExtra("salam", false);
         breaksNum = getActivity().getIntent().getIntExtra("num", 0);
+        isRunning = getActivity().getIntent().getBooleanExtra("run", false);
         bus.register(this);
+        if (!isRunning) onFinishTimer();
+
         setHasOptionsMenu(true);
 
     }
@@ -75,15 +78,13 @@ public class PomodoroFragment extends Fragment implements View.OnClickListener,V
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.pomodoro_layout, container, false);
-        button = (Button) view.findViewById(R.id.button2);
         timerView = (TimerView) view.findViewById(R.id.timeView);
 
-        button.setOnClickListener(this);
         timerView.setOnTouchListener(this);
         //read the value of Pomodoro from Shared Preferences
         setValues();
-        breakOrWork();
-
+//        breakOrWork();
+        drawTimer(time, 0);
         return view;
 
     }
@@ -117,10 +118,9 @@ public class PomodoroFragment extends Fragment implements View.OnClickListener,V
 
         if (angle == 360) {
             isBreak = intent.getBooleanExtra("isBreak", false);
-            breakOrWork();
-
-            UpdateDB();
-
+            isRunning = intent.getBooleanExtra("run", false);
+            onFinishTimer();
+            drawTimer(time, 0);
         }
     }
 
@@ -132,25 +132,24 @@ public class PomodoroFragment extends Fragment implements View.OnClickListener,V
         int month = now.get(Calendar.MONTH);
         int day = now.get(Calendar.DAY_OF_MONTH);
 
-        String date =year+"-"+month+"-"+day;
+        String date = year + "-" + month + "-" + day;
         Cursor c = db.getStatInDate(date);
 
-        if (c.moveToFirst()){
-            db.addPomodoroInData(date) ;
-        }
-        else{
-            db.insertDayStat(date,1);
+        if (c.moveToFirst()) {
+            db.addPomodoroInData(date);
+        } else {
+            db.insertDayStat(date, 1);
         }
         if (taskName != null) {
             db.addDone(taskName);
-            ((ViewPager)getActivity().findViewById(R.id.pager)).getAdapter().notifyDataSetChanged();
+            ((ViewPager) getActivity().findViewById(R.id.pager)).getAdapter().notifyDataSetChanged();
             taskName = null;
         }
     }
 
     private void breakOrWork() {
         if (isBreak) {
-            breaksNum++;
+//            breaksNum++;
             if (breaksNum == breaksInRow) {
                 Toast.makeText(getActivity(), "Time to take a looooonnnnggggg break", Toast.LENGTH_LONG).show();
                 breaksNum = 0;
@@ -162,12 +161,15 @@ public class PomodoroFragment extends Fragment implements View.OnClickListener,V
         } else {
             time = workTime;
         }
-        drawTimer(time, 0);
+
     }
 
     private void drawTimer(long time, int angle) {
         timerView.setAngle(angle);
-        timerView.setTime(getTime(time));
+        if (time == this.time)
+            timerView.setTime("Start!");
+        else
+            timerView.setTime(getTime(time));
         timerView.invalidate();
     }
 
@@ -181,7 +183,7 @@ public class PomodoroFragment extends Fragment implements View.OnClickListener,V
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_main,menu);
+        inflater.inflate(R.menu.menu_main, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -195,7 +197,6 @@ public class PomodoroFragment extends Fragment implements View.OnClickListener,V
 
             if (Math.sqrt((x - motionEvent.getX()) * (x - motionEvent.getX()) + (y - motionEvent.getY()) * (y - motionEvent.getY())) < r) {
                 System.out.println("circle clicked");
-                //TODO: call method declared
                 timerClicked();
             }
         }
@@ -203,6 +204,20 @@ public class PomodoroFragment extends Fragment implements View.OnClickListener,V
     }
 
     private void timerClicked() {
+        if (!isRunning) {
+            startTimerService();
+        } else {
+            //TODO:
+            getActivity().stopService(intent);
+            System.out.println("here i am");
+        }
+    }
+
+    private void onFinishTimer() {
+        if (isBreak) breaksNum++;
+        breakOrWork();
+//        drawTimer(time, 0);
+        UpdateDB();
     }
 
 }
