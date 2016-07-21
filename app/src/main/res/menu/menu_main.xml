@@ -11,7 +11,7 @@
             android:id="@+id/setting_button"
             app:showAsAction="ifRoom"
             android:title="setting"
-            android:icon="@drawable/plus"/>
+            android:icon="@drawable/ic_plus_grey600_24dp"/>
 
     <item
             android:id="@+id/info_button"

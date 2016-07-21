@@ -3,16 +3,13 @@ package com.test.myapplication2.app;
 
 //import android.support.v4.app.Fragment;
 //import android.support.v4.app.FragmentTransaction;
-import android.app.DatePickerDialog;
-import android.app.Fragment;
-import android.app.FragmentTransaction;
-import android.app.SharedElementCallback;
+import android.app.*;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.ColorInt;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.*;
 import android.text.InputType;
 import android.util.Log;
 import android.view.*;
@@ -37,19 +34,23 @@ public class NewTaskFragment extends Fragment implements AdapterView.OnItemSelec
     NumberPicker deadLineDay;
     NumberPicker deadLineHour;
     NumberPicker deadLineMinute;
-    NumberPicker target;
+//    NumberPicker target;
     Spinner tagSpinner;
     EditText description;
     Button addTask;
 
     EditText date;
-    DatePickerDialog dateDialoge;
+    DatePickerDialog dateDialoge ;
     SimpleDateFormat dateFormat ;
+
+    EditText target;
+    Dialog targetPicker;
+    NumberPicker targetNumebrPicker;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         setHasOptionsMenu(true);
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("Home");
+//        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("Home");
         super.onCreate(savedInstanceState);
     }
 
@@ -59,11 +60,20 @@ public class NewTaskFragment extends Fragment implements AdapterView.OnItemSelec
 
         View view = inflater.inflate(R.layout.newtask_layout, container, false);
         initialize(view);
+
         date = (EditText) view.findViewById(R.id.data_picker);
         dateFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.US);
         date.requestFocus();
         date.setInputType(InputType.TYPE_NULL);
+
         addTask.setOnClickListener(this);
+
+        targetPicker  = new Dialog(getActivity());
+        target = (EditText) view.findViewById(R.id.target_picker);
+        target.requestFocus();
+        target.setOnClickListener(this);
+
+        showTargetPicker();
         setDateTimeField();
         return view;
 
@@ -87,37 +97,71 @@ public class NewTaskFragment extends Fragment implements AdapterView.OnItemSelec
 
     }
 
+//    private void setDateTimeField() {
+//        date.setOnClickListener(this);
+//        System.out.println("listner set");
+//        Calendar newCalendar = Calendar.getInstance();
+//        dateDialoge = new DatePickerDialog(getActivity(), new DatePickerDialog.OnDateSetListener() {
+//
+//            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+//                Calendar newDate = Calendar.getInstance();
+//                newDate.set(year, monthOfYear, dayOfMonth);
+//                date.setText(dateFormat.format(newDate.getTime()));
+//            }
+//
+//        },newCalendar.get(Calendar.YEAR), newCalendar.get(Calendar.MONTH), newCalendar.get(Calendar.DAY_OF_MONTH));
+//
+//
+//    }
+
+    public void showTargetPicker()
+    {
+
+        targetPicker.setTitle("NumberPicker");
+        targetPicker.setContentView(R.layout.number_picker);
+        Button b1 = (Button) targetPicker.findViewById(R.id.button);
+        targetNumebrPicker = (NumberPicker) targetPicker.findViewById(R.id.numberPicker);
+        targetNumebrPicker.setMaxValue(10);
+        targetNumebrPicker.setMinValue(1);
+        targetNumebrPicker.setWrapSelectorWheel(false);
+        targetNumebrPicker.setOnClickListener(this);
+        b1.setOnClickListener(this);
+
+
+
+    }
+
 
     private void initialize(View view) {
 
         name = (EditText) view.findViewById(R.id.task_name);
-        deadLineYear = (NumberPicker) view.findViewById(R.id.task_deadline_year);
-        deadLineMonth = (NumberPicker) view.findViewById(R.id.task_deadline_month);
-        deadLineDay = (NumberPicker) view.findViewById(R.id.task_deadline_day);
-        deadLineHour = (NumberPicker) view.findViewById(R.id.task_deadline_hour);
-        deadLineMinute  = (NumberPicker) view.findViewById(R.id.task_deadline_minute);
-        target = (NumberPicker) view.findViewById(R.id.task_target);
+//        deadLineYear = (NumberPicker) view.findViewById(R.id.task_deadline_year);
+//        deadLineMonth = (NumberPicker) view.findViewById(R.id.task_deadline_month);
+//        deadLineDay = (NumberPicker) view.findViewById(R.id.task_deadline_day);
+//        deadLineHour = (NumberPicker) view.findViewById(R.id.task_deadline_hour);
+//        deadLineMinute  = (NumberPicker) view.findViewById(R.id.task_deadline_minute);
+//        target = (NumberPicker) view.findViewById(R.id.task_target);
         tagSpinner = (Spinner) view.findViewById(R.id.task_tag);
         description = (EditText) view.findViewById(R.id.task_description);
         addTask = (Button) view.findViewById(R.id.addTask);
 
-        deadLineYear.setMinValue(2015);
-        deadLineYear.setMaxValue(2030);
-
-        deadLineMonth.setMinValue(1);
-        deadLineMonth.setMaxValue(12);
-
-        deadLineDay.setMinValue(1);
-        deadLineDay.setMaxValue(31);
-
-        deadLineHour.setMinValue(0);
-        deadLineHour.setMaxValue(23);
-
-        deadLineMinute.setMinValue(0);
-        deadLineMinute.setMaxValue(59);
-
-        target.setMinValue(1);
-        target.setMaxValue(10);
+//        deadLineYear.setMinValue(2015);
+//        deadLineYear.setMaxValue(2030);
+//
+//        deadLineMonth.setMinValue(1);
+//        deadLineMonth.setMaxValue(12);
+//
+//        deadLineDay.setMinValue(1);
+//        deadLineDay.setMaxValue(31);
+//
+//        deadLineHour.setMinValue(0);
+//        deadLineHour.setMaxValue(23);
+//
+//        deadLineMinute.setMinValue(0);
+//        deadLineMinute.setMaxValue(59);
+//
+//        target.setMinValue(1);
+//        target.setMaxValue(10);
 
 
         List<String> colors = new ArrayList<String>();
@@ -153,7 +197,7 @@ public class NewTaskFragment extends Fragment implements AdapterView.OnItemSelec
             bundle.putInt(TasksDBHelper.TASK_COLUMN_DEADLINE_DAY , Integer.valueOf(deadLineDay.getValue()));
             bundle.putInt(TasksDBHelper.TASK_COLUMN_DEADLINE_HOUR , Integer.valueOf(deadLineHour.getValue()));
             bundle.putInt(TasksDBHelper.TASK_COLUMN_DEADLINE_MINUTE , Integer.valueOf(deadLineMinute.getValue()));
-            bundle.putInt(TasksDBHelper.TASK_COLUMN_TARGET , Integer.valueOf(target.getValue()));
+            bundle.putInt(TasksDBHelper.TASK_COLUMN_TARGET , Integer.valueOf(target.getText().toString()));
             bundle.putInt(TasksDBHelper.TASK_COLUMN_TAG , getColor(tagSpinner.getSelectedItem().toString()));
             bundle.putString(TasksDBHelper.TASK_COLUMN_DESCRIPTION , String.valueOf(description.getText()));
 
@@ -170,6 +214,13 @@ public class NewTaskFragment extends Fragment implements AdapterView.OnItemSelec
         else  if (view.getId() == R.id.data_picker){
             System.out.println("date pickeeer");
             dateDialoge.show();
+        }
+        else if (view.getId() == R.id.button){
+            target.setText(String.valueOf(targetNumebrPicker.getValue()));
+            targetPicker.dismiss();
+        }
+        else if (view.getId() == R.id.target_picker){
+            targetPicker.show();
         }
     }
 
