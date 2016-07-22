@@ -1,5 +1,7 @@
 package com.test.myapplication2.app;
 
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.content.*;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -9,6 +11,7 @@ import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.*;
@@ -33,7 +36,7 @@ public class PomodoroFragment extends Fragment implements View.OnClickListener, 
     boolean isRunning;
     String taskName = null;
     EventBus bus = EventBus.getDefault();
-    Intent intent;
+    private long MAX_CLICK_DURATION = 200;
 
     @Override
     public void onClick(View view) {
@@ -41,6 +44,7 @@ public class PomodoroFragment extends Fragment implements View.OnClickListener, 
     }
 
     private void startTimerService() {
+        Intent intent = new Intent(getActivity(), TimerService.class);
         intent.setAction("");
         intent.putExtra("time", time);
         intent.putExtra("isBreak", isBreak);
@@ -55,12 +59,12 @@ public class PomodoroFragment extends Fragment implements View.OnClickListener, 
         super.onCreate(savedInstanceState);
         //registering broadcast receiver
         getActivity().registerReceiver(broadcastReceiver, new IntentFilter(TimerService.BROADCAST_TIME));
-        intent = new Intent(getActivity(),TimerService.class);
         isBreak = getActivity().getIntent().getBooleanExtra("salam", false);
         breaksNum = getActivity().getIntent().getIntExtra("num", 0);
         isRunning = getActivity().getIntent().getBooleanExtra("run", false);
         bus.register(this);
         if (!isRunning) onFinishTimer();
+        else breakOrWork();
 
         setHasOptionsMenu(true);
 
@@ -121,6 +125,8 @@ public class PomodoroFragment extends Fragment implements View.OnClickListener, 
             isRunning = intent.getBooleanExtra("run", false);
             onFinishTimer();
             drawTimer(time, 0);
+            String text = isBreak ? getString(R.string.break_time_message) : getString(R.string.work_time_message);
+            showDialog(text);
         }
     }
 
@@ -151,11 +157,11 @@ public class PomodoroFragment extends Fragment implements View.OnClickListener, 
         if (isBreak) {
 //            breaksNum++;
             if (breaksNum == breaksInRow) {
-                Toast.makeText(getActivity(), "Time to take a looooonnnnggggg break", Toast.LENGTH_LONG).show();
+//                Toast.makeText(getActivity(), "Time to take a looooonnnnggggg break", Toast.LENGTH_LONG).show();
                 breaksNum = 0;
                 time = longBreakTime;
             } else {
-                Toast.makeText(getActivity(), "Time to take a break", Toast.LENGTH_LONG).show();
+//                Toast.makeText(getActivity(), "Time to take a break", Toast.LENGTH_LONG).show();
                 time = shortBreakTime;
             }
         } else {
@@ -167,7 +173,7 @@ public class PomodoroFragment extends Fragment implements View.OnClickListener, 
     private void drawTimer(long time, int angle) {
         timerView.setAngle(angle);
         if (time == this.time)
-            timerView.setTime("Start!");
+            timerView.setTime(getString(R.string.start_timer));
         else
             timerView.setTime(getTime(time));
         timerView.invalidate();
@@ -193,13 +199,23 @@ public class PomodoroFragment extends Fragment implements View.OnClickListener, 
         int y = timerView.getCenterY();
         int r = timerView.getRadious();
 
-        if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
-
-            if (Math.sqrt((x - motionEvent.getX()) * (x - motionEvent.getX()) + (y - motionEvent.getY()) * (y - motionEvent.getY())) < r) {
-                System.out.println("circle clicked");
-                timerClicked();
-            }
+        switch (motionEvent.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                if (Math.sqrt((x - motionEvent.getX()) * (x - motionEvent.getX()) + (y - motionEvent.getY()) * (y - motionEvent.getY())) < r) {
+                    System.out.println("circle clicked");
+//                    timerClicked();
+                }
+                break;
+            case MotionEvent.ACTION_UP:
+                long clickDuration = motionEvent.getEventTime() - motionEvent.getDownTime();
+                if (clickDuration < MAX_CLICK_DURATION) {
+                    timerClicked();
+                }
+                break;
+            default:
+                break;
         }
+
         return true;
     }
 
@@ -208,16 +224,55 @@ public class PomodoroFragment extends Fragment implements View.OnClickListener, 
             startTimerService();
         } else {
             //TODO:
-            getActivity().stopService(intent);
-            System.out.println("here i am");
+            final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+            alertDialogBuilder.setMessage(getString(R.string.stop_pomodoro_dialog));
+
+            alertDialogBuilder.setPositiveButton("yes", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface arg0, int arg1) {
+                    getActivity().stopService(new Intent(getActivity(), TimerService.class));
+                    drawTimer(time, 0);
+                    isRunning = false;
+                }
+            });
+
+            alertDialogBuilder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    //TODO:RESUME
+//                    Toast.makeText(getActivity(),"You clicked no button",Toast.LENGTH_LONG).show();
+                    dialog.cancel();
+                }
+            });
+
+            AlertDialog alertDialog = alertDialogBuilder.create();
+            alertDialog.show();
+
         }
     }
 
     private void onFinishTimer() {
-        if (isBreak) breaksNum++;
+        if (isBreak) {
+            breaksNum++;
+            UpdateDB();
+        }
         breakOrWork();
-//        drawTimer(time, 0);
-        UpdateDB();
+
+    }
+
+    private void showDialog(String message) {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+        alertDialogBuilder.setMessage(message);
+
+        alertDialogBuilder.setNeutralButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                ((NotificationManager) getActivity().getSystemService(MainActivity.NOTIFICATION_SERVICE)).cancel(1338);
+            }
+        });
+
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
     }
 
 }

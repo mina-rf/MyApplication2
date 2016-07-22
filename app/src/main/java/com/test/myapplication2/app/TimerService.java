@@ -18,7 +18,6 @@ import android.util.Log;
  * Completed by melika :)
  */
 public class TimerService extends Service {
-    public static final String MY_SERVICE = "it.unibz.bluedroid.bluetooth.service.MY_SERVICE";
 
     public static final String BROADCAST_TIME = "com.test.myapplication2.app.displayevent";
     Intent myintent;
@@ -31,12 +30,12 @@ public class TimerService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        System.out.println("service started");
+//        System.out.println("service started");
         long time = intent.getLongExtra("time", 0L);
         isBreak = intent.getBooleanExtra("isBreak", false);
         num = intent.getIntExtra("num", 0);
 
-        Notification notif = getNotification("remaining time: " + PomodoroFragment.getTime(time), null);
+        Notification notif = getNotification(getString(R.string.remaining_time) + PomodoroFragment.getTime(time), null);
         ((NotificationManager) getSystemService(MainActivity.NOTIFICATION_SERVICE)).cancel(1338);
         timer = new CountDownTimer(time, 1000) {
 
@@ -74,7 +73,7 @@ public class TimerService extends Service {
         PendingIntent pIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), startIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         return new Notification.Builder(this)
                 .setSmallIcon(R.mipmap.ic_launcher)
-                .setContentTitle("Pomo.Do")
+                .setContentTitle(getString(R.string.app_name))
                 .setContentText(text)
                 .setContentIntent(pIntent)
                 .setSound(sound)
@@ -85,18 +84,14 @@ public class TimerService extends Service {
 
         SharedPreferences getAlarms = PreferenceManager.
                 getDefaultSharedPreferences(getBaseContext());
+
         Uri uri = null;
 
-//        if (getAlarms.getBoolean("playing", true)) {
         String alarms = getAlarms.getString("ringtone", "default ringtone");
         System.out.println(alarms);
         uri = Uri.parse(alarms);
-//        }
-//        Uri alarmUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
-//        if (alarmUri == null) {
-//            alarmUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-//        }
-        String text = isBreak ? "Time to take a break" : "Time to work";
+
+        String text = isBreak ? getString(R.string.break_time_message) : getString(R.string.work_time_message);
 
         Notification notification = getNotification(text, uri);
 
@@ -107,16 +102,14 @@ public class TimerService extends Service {
 
     private void updateNotification(long l) {
 
-        Notification notification = getNotification("remaining time: " + PomodoroFragment.getTime(l), null);
+        Notification notification = getNotification(getString(R.string.remaining_time) + PomodoroFragment.getTime(l), null);
         NotificationManager mNotificationManager = (NotificationManager) getSystemService(MainActivity.NOTIFICATION_SERVICE);
         mNotificationManager.notify(1337, notification);
     }
 
     @Override
     public void onDestroy() {
-        System.out.println("stopped!");
         timer.cancel();
-        stopSelf();
         super.onDestroy();
     }
 

@@ -56,7 +56,7 @@
                     android:src="@mipmap/ic_plus_white_24dp"
                     app:layout_anchorGravity="bottom|right|end"
                     android:id="@+id/new_task"
-                    app:backgroundTint="@color/primary"/>
+                    />
 
         </android.support.design.widget.CoordinatorLayout>
     </LinearLayout>
