@@ -1,28 +1,26 @@
 package com.test.myapplication2.app;
 
 
-//import android.support.v4.app.Fragment;
-//import android.support.v4.app.FragmentTransaction;
 import android.app.*;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
-import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
-import android.support.annotation.ColorInt;
 import android.support.annotation.Nullable;
-import android.support.v7.app.*;
 import android.support.v7.app.AlertDialog;
 import android.text.InputType;
 import android.util.Log;
 import android.view.*;
 import android.widget.*;
+import de.greenrobot.event.EventBus;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
+
+
 
 
 /**
@@ -36,10 +34,13 @@ public class NewTaskFragment extends Fragment implements AdapterView.OnItemSelec
     Spinner tagSpinner;
     EditText description;
     Button addTask;
+    Button cancel;
 
     EditText date;
     DatePickerDialog dateDialoge ;
     SimpleDateFormat dateFormat ;
+
+    EventBus bus = EventBus.getDefault();
 
     EditText target;
     AlertDialog targetPicker;
@@ -59,11 +60,12 @@ public class NewTaskFragment extends Fragment implements AdapterView.OnItemSelec
     LinearLayout timeLayout;
     LinearLayout dateLayout;
 
+    boolean inEditMode = false;
+    boolean twice = false ;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         setHasOptionsMenu(true);
-//        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("Home");
         super.onCreate(savedInstanceState);
     }
 
@@ -73,34 +75,43 @@ public class NewTaskFragment extends Fragment implements AdapterView.OnItemSelec
 
         View view = inflater.inflate(R.layout.newtask_layout, container, false);
         initialize(view);
-
-        layout = (LinearLayout) view.findViewById(R.id.newtask_layout);
-
-//        date = (EditText) view.findViewById(R.id.data_picker);
-        dateFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.US);
-//        date.requestFocus();
-//        date.setInputType(InputType.TYPE_NULL);
-
-        addTask.setOnClickListener(this);
-
-        target = (EditText) view.findViewById(R.id.target_picker);
-        target.requestFocus();
-        target.setInputType(InputType.TYPE_NULL);
-        target.setOnClickListener(this);
-
-        haveDeadLine = (CheckBox) view.findViewById(R.id.have_deadline);
-        haveDeadLine.setOnCheckedChangeListener(this);
-
         showTargetPicker();
-//        setDateTimeField();
+//        EventBus.getDefault().register(this);
+        if(getArguments() != null){
+            initializeForEdit();
+        }
+
         return view;
 
+    }
+
+    private void initializeForEdit() {
+
+
+        inEditMode = true;
+        Bundle info = getArguments();
+        name.setText(info.getString(TasksDBHelper.TASK_COLUMN_NAME));
+        target.setText(Integer.toString(info.getInt(TasksDBHelper.TASK_COLUMN_TARGET)));
+//        tagSpinner.setSelection(getColorIndex(info.getInt(TasksDBHelper.TASK_COLUMN_TAG)));
+        description.setText(info.getString(TasksDBHelper.TASK_COLUMN_DESCRIPTION));
+        System.out.println("hasss : " + info.getInt(TasksDBHelper.TASK_COLUMN_HASDEADLINE));
+        if (info.getInt(TasksDBHelper.TASK_COLUMN_HASDEADLINE) == 1){
+            haveDeadLine.setChecked(true);
+            Calendar now = Calendar.getInstance();
+            createTimerEditText(now);
+            createDateEditText(now);
+            setDateAndTimePickers();
+            date.setText(info.getInt(TasksDBHelper.TASK_COLUMN_DEADLINE_YEAR)
+                    +"-"+info.getInt(TasksDBHelper.TASK_COLUMN_DEADLINE_MONTH)+"-"+
+                    info.getInt(TasksDBHelper.TASK_COLUMN_DEADLINE_DAY));
+            time.setText( info.getInt(TasksDBHelper.TASK_COLUMN_DEADLINE_HOUR)+":"
+                    + info.getInt(TasksDBHelper.TASK_COLUMN_DEADLINE_MINUTE));
+        }
     }
 
 
     private void setDateField() {
         date.setOnClickListener(this);
-        System.out.println("listner set");
         Calendar newCalendar = Calendar.getInstance();
         dateDialoge = new DatePickerDialog(getActivity(), new DatePickerDialog.OnDateSetListener() {
 
@@ -117,7 +128,6 @@ public class NewTaskFragment extends Fragment implements AdapterView.OnItemSelec
 
     private void setTimeField() {
         time.setOnClickListener(this);
-        System.out.println("listner set");
         Calendar newCalendar = Calendar.getInstance();
         int hour = newCalendar.get(Calendar.HOUR_OF_DAY);
         int minute = newCalendar.get(Calendar.MINUTE);
@@ -128,7 +138,6 @@ public class NewTaskFragment extends Fragment implements AdapterView.OnItemSelec
             }
 
         } , hour , minute , true);
-        timeDialoge.setTitle("Select Time");
 
 
 
@@ -142,7 +151,6 @@ public class NewTaskFragment extends Fragment implements AdapterView.OnItemSelec
         builder = new AlertDialog.Builder(getActivity());
         builder.setView(dialogView);
         builder.setTitle("Choose number of intervals :");
-
         targetNumebrPicker = (NumberPicker) dialogView.findViewById(R.id.numberPicker);
         targetNumebrPicker.setMaxValue(10);
         targetNumebrPicker.setMinValue(1);
@@ -152,7 +160,7 @@ public class NewTaskFragment extends Fragment implements AdapterView.OnItemSelec
                 DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         target.setText(String.valueOf(targetNumebrPicker.getValue()));
-                        ;
+
                     }
                 });
 
@@ -164,25 +172,36 @@ public class NewTaskFragment extends Fragment implements AdapterView.OnItemSelec
     private void initialize(View view) {
 
         name = (EditText) view.findViewById(R.id.task_name);
-//        deadLineYear = (NumberPicker) view.findViewById(R.id.task_deadline_year);
-//        deadLineMonth = (NumberPicker) view.findViewById(R.id.task_deadline_month);
-//        deadLineDay = (NumberPicker) view.findViewById(R.id.task_deadline_day);
-//        deadLineHour = (NumberPicker) view.findViewById(R.id.task_deadline_hour);
-//        deadLineMinute  = (NumberPicker) view.findViewById(R.id.task_deadline_minute);
-//        target = (NumberPicker) view.findViewById(R.id.task_target);
+        layout = (LinearLayout) view.findViewById(R.id.newtask_layout);
+        dateFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.US);
+
         tagSpinner = (Spinner) view.findViewById(R.id.task_tag);
         description = (EditText) view.findViewById(R.id.task_description);
         addTask = (Button) view.findViewById(R.id.addTask);
+        cancel = (Button)  view.findViewById(R.id.cancel_task);
+
+        cancel.setOnClickListener(this);
+        addTask.setOnClickListener(this);
+
+        target = (EditText) view.findViewById(R.id.target_picker);
+        target.requestFocus();
+        target.setInputType(InputType.TYPE_NULL);
+        target.setOnClickListener(this);
+
+        haveDeadLine = (CheckBox) view.findViewById(R.id.have_deadline);
+        haveDeadLine.setOnCheckedChangeListener(this);
+
 
 
         List<String> colors = new ArrayList<String>();
-        colors.add("RED");
-        colors.add("ORANGE");
-        colors.add("YELLOW");
-        colors.add("GREEN");
-        colors.add("BLUE");
-        colors.add("PINK");
+        colors.add("Red");
+        colors.add("Orange");
+        colors.add("Yellow");
+        colors.add("Green");
+        colors.add("Blue");
+        colors.add("Pink");
 
+        System.out.println("before listnere!");
         tagSpinner.setOnItemSelectedListener(this);
         MyArrayAdapter adapter = new MyArrayAdapter(getActivity() ,colors);
 
@@ -199,8 +218,6 @@ public class NewTaskFragment extends Fragment implements AdapterView.OnItemSelec
 
         if (view.getId() == R.id.addTask){
 
-            Log.d("tagggg", "onClick ");
-
             ToDoListFragment fragment = new ToDoListFragment();
             Bundle bundle = new Bundle();
 
@@ -213,15 +230,23 @@ public class NewTaskFragment extends Fragment implements AdapterView.OnItemSelec
             bundle.putInt(TasksDBHelper.TASK_COLUMN_TARGET , Integer.valueOf(target.getText().toString()));
             bundle.putInt(TasksDBHelper.TASK_COLUMN_TAG , getColor(tagSpinner.getSelectedItem().toString()));
             bundle.putString(TasksDBHelper.TASK_COLUMN_DESCRIPTION , String.valueOf(description.getText()));
+            bundle.putInt(TasksDBHelper.TASK_COLUMN_HASDEADLINE , haveDeadLine.isChecked() == true ? 1 : 0);
+            bundle.putInt("isEdit" , inEditMode == false ? 0 : 1 );
+            bundle.putString("nameBeforeEdit" , getArguments().getString(TasksDBHelper.TASK_COLUMN_NAME));
 
             fragment.setArguments(bundle);
-
-            //Inflate the fragment
             FragmentTransaction transaction = getFragmentManager().beginTransaction();
             transaction.replace(R.id.root_frame , fragment);
             transaction.commit();
         }
+        else if (view.getId() == R.id.cancel_task){
 
+            ToDoListFragment fragment = new ToDoListFragment();
+            FragmentTransaction transaction = getFragmentManager().beginTransaction();
+            transaction.replace(R.id.root_frame , fragment);
+            transaction.commit();
+
+        }
         else if (view.getId() == R.id.target_picker){
             showTargetPicker();
             builder.show();
@@ -245,17 +270,17 @@ public class NewTaskFragment extends Fragment implements AdapterView.OnItemSelec
 
     public static int getColor (String color){
 
-        if (color.equals("RED"))
+        if (color.equals("Red"))
             return Color.parseColor("#DC143C");
-        if (color.equals("ORANGE"))
+        if (color.equals("Orange"))
             return Color.parseColor("#FF8C00");
-        if (color.equals("YELLOW"))
+        if (color.equals("Yellow"))
             return Color.parseColor("#FFD700");
-        if (color.equals("GREEN"))
+        if (color.equals("Green"))
             return Color.parseColor("#32CD32");
-        if (color.equals("BLUE"))
+        if (color.equals("Blue"))
             return Color.parseColor("#00BFFF");
-        if (color.equals("PINK"))
+        if (color.equals("Pink"))
             return Color.parseColor("#FF69B4");
 
         return Color.BLACK;
@@ -264,7 +289,7 @@ public class NewTaskFragment extends Fragment implements AdapterView.OnItemSelec
 
     @Override
     public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-        if (b == true) {
+        if (b == true && (!inEditMode || twice ))  {
 
             Calendar now = Calendar.getInstance();
 
@@ -272,34 +297,39 @@ public class NewTaskFragment extends Fragment implements AdapterView.OnItemSelec
 
             createDateEditText(now);
 
-            dateTV = new TextView(getActivity());
-            dateTV.setText("Date:  ");
-            dateTV.setTextSize(16);
-
-            dateLayout = new LinearLayout(getActivity());
-            dateLayout.setOrientation(LinearLayout.HORIZONTAL);
-            dateLayout.addView(dateTV);
-            dateLayout.addView(date);
-
-            timeTV = new TextView(getActivity());
-            timeTV.setText("Time:  ");
-            timeTV.setTextSize(16);
-
-            timeLayout = new LinearLayout(getActivity());
-            timeLayout.setOrientation(LinearLayout.HORIZONTAL);
-            timeLayout.addView(timeTV);
-            timeLayout.addView(time);
-
-            layout.addView(dateLayout , 1);
-            layout.addView(timeLayout , 2);
+            setDateAndTimePickers();
 
             System.out.println("checked");
         }
-        else {
+        else if (b == false){
+            twice = true ;
             System.out.println("unchecked");
             ((ViewGroup) timeLayout.getParent()).removeView(timeLayout);
             ((ViewGroup) dateLayout.getParent()).removeView(dateLayout);
         }
+    }
+
+    private void setDateAndTimePickers() {
+        dateTV = new TextView(getActivity());
+        dateTV.setText("Date:  ");
+        dateTV.setTextSize(16);
+
+        dateLayout = new LinearLayout(getActivity());
+        dateLayout.setOrientation(LinearLayout.HORIZONTAL);
+        dateLayout.addView(dateTV);
+        dateLayout.addView(date);
+
+        timeTV = new TextView(getActivity());
+        timeTV.setText("Time:  ");
+        timeTV.setTextSize(16);
+
+        timeLayout = new LinearLayout(getActivity());
+        timeLayout.setOrientation(LinearLayout.HORIZONTAL);
+        timeLayout.addView(timeTV);
+        timeLayout.addView(time);
+
+        layout.addView(dateLayout , 1);
+        layout.addView(timeLayout , 2);
     }
 
     private void createDateEditText(Calendar now) {
@@ -370,11 +400,11 @@ public class NewTaskFragment extends Fragment implements AdapterView.OnItemSelec
         public View getView(int i, View view, ViewGroup viewGroup) {
             view = inflater.inflate(R.layout.tag , null);
             TextView tv = (TextView) view.findViewById(R.id.color_name);
-            Button bt = (Button) view.findViewById((R.id.tagInSpinner));
+            TextView tag = (TextView) view.findViewById((R.id.tagInSpinner));
 
             tv.setTextColor(Color.BLACK);
-            bt.setBackgroundColor(getColor(colors.get(i)));
-            tv.setText(colors.get(i));
+            tag.setBackgroundColor(getColor(colors.get(i)));
+            tv.setText("    " +colors.get(i));
 //            tv.setMinimumWidth(100);
 //            view.setBackgroundColor(getColor(colors.get(i)));
 
@@ -393,8 +423,10 @@ public class NewTaskFragment extends Fragment implements AdapterView.OnItemSelec
     }
 
     private int getYear(){
-        if (haveDeadLine.isActivated()){
+        if (haveDeadLine.isChecked()){
+            System.out.println("yyyyy" +Integer.valueOf(date.getText().toString().split("-")[0]));
             return Integer.valueOf(date.getText().toString().split("-")[0]);
+
         }
         else
             return 0;
@@ -402,7 +434,7 @@ public class NewTaskFragment extends Fragment implements AdapterView.OnItemSelec
     }
 
     private int getMonth(){
-        if (haveDeadLine.isActivated()){
+        if (haveDeadLine.isChecked()){
             return Integer.valueOf(date.getText().toString().split("-")[1]);
         }
         else
@@ -411,7 +443,7 @@ public class NewTaskFragment extends Fragment implements AdapterView.OnItemSelec
     }
 
     private int getDay(){
-        if (haveDeadLine.isActivated()){
+        if (haveDeadLine.isChecked()){
             return Integer.valueOf(date.getText().toString().split("-")[2]);
         }
         else
@@ -419,7 +451,7 @@ public class NewTaskFragment extends Fragment implements AdapterView.OnItemSelec
 
     }
     private int getHour(){
-        if (haveDeadLine.isActivated()){
+        if (haveDeadLine.isChecked()){
             return Integer.valueOf(time.getText().toString().split(":")[0]);
         }
         else
@@ -428,13 +460,32 @@ public class NewTaskFragment extends Fragment implements AdapterView.OnItemSelec
     }
 
     private int getMinute(){
-        if (haveDeadLine.isActivated()){
-            return Integer.valueOf(time.getText().toString().split("-")[1]);
+        if (haveDeadLine.isChecked()){
+            return Integer.valueOf(time.getText().toString().split(":")[1]);
         }
         else
             return 0;
 
     }
+
+
+//    public void onEvent(TaskInfo event) {
+//        System.out.println(event.name);
+//        name.setText(event.name);
+////        target.setText(event.target);
+////        tagSpinner.setSelection(getColoIndex(event.color));
+//        description.setText(event.description);
+//        if (event.hasDeadline){
+//            Calendar now = Calendar.getInstance();
+//            createTimerEditText(now);
+//            createDateEditText(now);
+//            setDateAndTimePickers();
+//            date.setText(event.year+"-"+event.month+"-"+event.day);
+//            time.setText(event.hour+":"+event.minute);
+//        }
+//        System.out.println("end of event bus");
+//
+//    }
 
 
 }

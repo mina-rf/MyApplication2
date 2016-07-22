@@ -4,9 +4,13 @@
               android:layout_width="wrap_content"
               android:layout_height="wrap_content">
 
-    <Button
+    <!--<Button-->
+            <!--android:layout_width="30dp"-->
+            <!--android:layout_height="30dp"-->
+            <!--android:id="@+id/tagInSpinner"/>-->
+    <TextView
             android:layout_width="30dp"
-            android:layout_height="30dp"
+            android:layout_height="wrap_content"
             android:id="@+id/tagInSpinner"/>
     <TextView
             android:layout_width="wrap_content"

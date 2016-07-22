@@ -12,6 +12,7 @@ import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.*;
 import android.widget.*;
+import de.greenrobot.event.EventBus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,20 +49,50 @@ public class ToDoListFragment  extends Fragment implements View.OnClickListener 
     public boolean onContextItemSelected(MenuItem item) {
 
         AdapterView.AdapterContextMenuInfo info  =  (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-
+        TextView tv = (TextView) info.targetView.findViewById(R.id.task_name_inlist);
         if (item.getTitle().equals((getActivity().getString(R.string.delete_task)))){
-            TextView tv = (TextView) info.targetView.findViewById(R.id.task_name_inlist);
             tasksDB.deleteTask(tv.getText().toString());
             ((ViewPager)getActivity().findViewById(R.id.pager)).getAdapter().notifyDataSetChanged();
             return true;
         }
         else if (item.getTitle().equals((getActivity().getString(R.string.edit_task)))){
-
+            openEditPage(tv.getText().toString());
+//            ((ViewPager)getActivity().findViewById(R.id.pager)).getAdapter().notifyDataSetChanged();
             return true;
+
         }
         else
             return super.onContextItemSelected(item);
 
+
+
+    }
+
+    private void openEditPage(String name) {
+        TasksDBHelper db = new TasksDBHelper(getActivity());
+        EventBus bus = EventBus.getDefault();
+        bus.post(db.getTaskInfo(name));
+
+        Bundle b = new Bundle();
+        TaskInfo info = db.getTaskInfo(name);
+        b.putString(db.TASK_COLUMN_NAME , info.name);
+        b.putInt(db.TASK_COLUMN_DEADLINE_YEAR , info.year);
+        b.putInt(db.TASK_COLUMN_DEADLINE_MONTH , info.month);
+        b.putInt(db.TASK_COLUMN_DEADLINE_DAY , info.day);
+        b.putInt(db.TASK_COLUMN_DEADLINE_HOUR , info.hour);
+        b.putInt(db.TASK_COLUMN_DEADLINE_MINUTE, info.minute);
+        b.putString(db.TASK_COLUMN_DESCRIPTION  , info.description);
+        b.putInt(db.TASK_COLUMN_TARGET , info.target);
+        b.putInt(db.TASK_COLUMN_TAG , info.color);
+        b.putInt(db.TASK_COLUMN_HASDEADLINE , info.hasDeadline ? 1 : 0);
+
+        NewTaskFragment f = new NewTaskFragment();
+        f.setArguments(b);
+        FragmentTransaction trans = getFragmentManager().beginTransaction();
+        trans.replace(R.id.root_frame,f);
+        trans.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+        trans.addToBackStack(null);
+        trans.commit();
 
 
     }
@@ -86,14 +117,13 @@ public class ToDoListFragment  extends Fragment implements View.OnClickListener 
 
         FloatingActionButton addButton = (FloatingActionButton) view.findViewById(R.id.new_task);
         addButton.setOnClickListener(this);
-//        Drawable drawable = view.getResources().getDrawable(R.drawable.add);
-//        drawable.setBounds(0, 0, 150 ,
-//                170);
-//        addButton.setCompoundDrawables(null,drawable, null, null); //set drawab
-////        addButton.setFocusable(true);
 
         if (getArguments() != null) {
-            addNewTaskToDB(getArguments());
+            if (getArguments().getInt("isEdit") == 0)
+                addNewTaskToDB(getArguments());
+            else
+                editNewTask(getArguments() , getArguments().getString("nameBeforeEdit"));
+
         }
 
         Log.d("seda shod!", "onCreateView ");
@@ -122,13 +152,6 @@ public class ToDoListFragment  extends Fragment implements View.OnClickListener 
 
         taskList.setClickable(true);
         registerForContextMenu(taskList);
-//        taskList.setOnCreateContextMenuListener(new View.OnCreateContextMenuListener() {
-//            public void onCreateContextMenu(ContextMenu menu, View v,
-//                                            ContextMenu.ContextMenuInfo menuInfo) {
-//                menu.add(0, v.getId(), 1, "Add");
-//                menu.add(0, v.getId() , 2,"Remove");
-//            }});
-
 
         taskList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
@@ -148,6 +171,13 @@ public class ToDoListFragment  extends Fragment implements View.OnClickListener 
 
     }
 
+    private void editNewTask(Bundle arguments, String nameBeforEdit) {
+        TasksDBHelper db = new TasksDBHelper(getActivity());
+        db.deleteTask(nameBeforEdit);
+        System.out.println("deletdd"+nameBeforEdit);
+        addNewTaskToDB(arguments);
+    }
+
     private void changePager() {
         ((ViewPager)getActivity().findViewById(R.id.pager)).setCurrentItem(0);
 
@@ -164,7 +194,9 @@ public class ToDoListFragment  extends Fragment implements View.OnClickListener 
                 arguments.getString(TasksDBHelper.TASK_COLUMN_DESCRIPTION),
                 arguments.getInt(TasksDBHelper.TASK_COLUMN_TAG),
                 arguments.getInt(TasksDBHelper.TASK_COLUMN_TARGET),
-                0);
+                0 );
+
+        System.out.println("year : "+  arguments.getInt(TasksDBHelper.TASK_COLUMN_DEADLINE_YEAR));
 
     }
 
@@ -186,10 +218,6 @@ public class ToDoListFragment  extends Fragment implements View.OnClickListener 
         textView.setLayoutParams(lparams);
         textView.setText("task: " + text);
 
-
-
-
-
         LinearLayout layout = new LinearLayout(getActivity());
         layout.setLayoutParams(lparams);
         layout.addView(textView);
@@ -202,14 +230,6 @@ public class ToDoListFragment  extends Fragment implements View.OnClickListener 
         Log.d("inam tag!", "onClick joz button");
         if (view.getId() == R.id.new_task){
 
-            Log.d("inam tag!", "onClick ");
-//            NewTaskFragment newFragment = new NewTaskFragment();
-//
-//            android.app.FragmentTransaction transaction = getFragmentManager().beginTransaction();
-//            transaction.replace(R.id.container, newFragment);
-//            transaction.addToBackStack(null);
-////            transaction.remove(this);
-//            transaction.commit();
             FragmentTransaction trans = getFragmentManager().beginTransaction();
         /*
          * IMPORTANT: We use the "root frame" defined in
@@ -228,9 +248,7 @@ public class ToDoListFragment  extends Fragment implements View.OnClickListener 
 
 
         }
-        if (view.getId() == R.id.tasks_listView){
-            System.out.println("heeereee");
-        }
+
 
     }
 

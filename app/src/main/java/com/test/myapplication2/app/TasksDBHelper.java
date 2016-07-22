@@ -26,6 +26,7 @@ public class TasksDBHelper extends SQLiteOpenHelper {
     public static final String TASK_COLUMN_TAG = "tag";
     public static final String TASK_COLUMN_TARGET = "target";
     public static final String TASK_COLUMN_DONE = "done";
+    public static final String TASK_COLUMN_HASDEADLINE = "hasdeadline";
 
     public static  final String POMODORO_TABLE_NAME = "pomodoros";
     public static final String POMODORO_COLUMN_NUMBER =  "number";
@@ -49,6 +50,7 @@ public class TasksDBHelper extends SQLiteOpenHelper {
                 TASK_COLUMN_DESCRIPTION + " TEXT, " +
                 TASK_COLUMN_TARGET + " INTEGER, " +
                 TASK_COLUMN_DONE + " INTEGER, " +
+//                TASK_COLUMN_HASDEADLINE + "INTEGER,"+
                 TASK_COLUMN_TAG + " INTEGER)"
         );
 
@@ -69,7 +71,7 @@ public class TasksDBHelper extends SQLiteOpenHelper {
     }
 
     public boolean insertTask(String name, Integer deadline_year , Integer deadline_month , Integer deadline_day ,
-                              Integer deadline_hour , Integer deadline_minute , String description , Integer tag , Integer target  , Integer done) {
+                              Integer deadline_hour , Integer deadline_minute , String description , Integer tag , Integer target  , Integer done ) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues contentValues = new ContentValues();
 
@@ -83,6 +85,7 @@ public class TasksDBHelper extends SQLiteOpenHelper {
         contentValues.put(TASK_COLUMN_TARGET, target);
         contentValues.put(TASK_COLUMN_DONE, 0);
         contentValues.put(TASK_COLUMN_TAG, tag);
+//        contentValues.put(TASK_COLUMN_HASDEADLINE , hasDeadline);
 
         db.insert(TASK_TABLE_NAME, null, contentValues);
         return true;
@@ -90,7 +93,7 @@ public class TasksDBHelper extends SQLiteOpenHelper {
 
     public boolean updateTask (String name, Integer deadline_year , Integer deadline_month , Integer deadline_day ,
                                Integer deadline_hour , Integer deadline_minute , Integer work_interval ,
-                               Integer short_Break , String description , Integer tag , Integer target  , Integer done) {
+                               Integer short_Break , String description , Integer tag , Integer target  , Integer done ,Integer hasDeadline) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(TASK_COLUMN_NAME, name);
@@ -103,6 +106,7 @@ public class TasksDBHelper extends SQLiteOpenHelper {
         contentValues.put(TASK_COLUMN_TARGET, target);
         contentValues.put(TASK_COLUMN_DONE, done);
         contentValues.put(TASK_COLUMN_TAG, tag);
+//        contentValues.put(TASK_COLUMN_HASDEADLINE , hasDeadline);
         db.update(TASK_TABLE_NAME, contentValues, TASK_COLUMN_NAME + " = ? ", new String[] { name } );
         return true;
     }
@@ -185,6 +189,25 @@ public class TasksDBHelper extends SQLiteOpenHelper {
         if (c.moveToFirst())
             return c.getInt(c.getColumnIndex(POMODORO_COLUMN_NUMBER));
         return 0;
+    }
+
+    public TaskInfo getTaskInfo (String name){
+        Cursor c = getTask(name);
+        TaskInfo info = null;
+        if (c.moveToFirst()){
+            boolean hasDeadline = c.getInt(c.getColumnIndex(TASK_COLUMN_DEADLINE_YEAR)) == 0 ? false : true;
+            int year = c.getInt(c.getColumnIndex(TASK_COLUMN_DEADLINE_YEAR));
+            int month = c.getInt(c.getColumnIndex(TASK_COLUMN_DEADLINE_MONTH));
+            int day = c.getInt(c.getColumnIndex(TASK_COLUMN_DEADLINE_DAY));
+            int hour = c.getInt(c.getColumnIndex(TASK_COLUMN_DEADLINE_HOUR));
+            int minute = c.getInt(c.getColumnIndex(TASK_COLUMN_DEADLINE_MINUTE));
+            int color = c.getInt(c.getColumnIndex(TASK_COLUMN_TAG));
+            String description = c.getString(c.getColumnIndex(TASK_COLUMN_DESCRIPTION));
+            int target = c.getInt(c.getColumnIndex(TASK_COLUMN_TARGET));
+            int done = c.getInt(c.getColumnIndex(TASK_COLUMN_DONE));
+            info = new TaskInfo(name,color,hasDeadline,year,month,day,hour,minute,description,target,done);
+        }
+        return info;
     }
 
 

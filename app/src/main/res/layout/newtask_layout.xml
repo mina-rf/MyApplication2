@@ -64,8 +64,9 @@
                     <Spinner
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:id="@+id/task_tag" android:spinnerMode="dropdown"
-                            android:focusable="true" android:longClickable="false"/>
+                            android:id="@+id/task_tag" android:spinnerMode="dialog"
+                            android:focusable="true" android:longClickable="false"
+                            android:layout_marginTop="@dimen/abc_action_bar_content_inset_material"/>
                 </LinearLayout>
                 <EditText
                         android:layout_width="wrap_content"
@@ -73,7 +74,8 @@
                         android:id="@+id/task_description" android:hint="More Description"
                         android:textSize="@dimen/abc_action_bar_content_inset_material"
                         android:layout_marginBottom="@dimen/abc_action_bar_content_inset_material"
-                        android:layout_marginLeft="@dimen/abc_action_bar_content_inset_material"/>
+                        android:layout_marginLeft="@dimen/abc_action_bar_content_inset_material"
+                        android:layout_marginTop="@dimen/abc_action_bar_content_inset_material"/>
             </LinearLayout>
 
             <LinearLayout
@@ -96,8 +98,16 @@
                 <Button
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Add Task"
-                        android:id="@+id/addTask"/>
+                        android:text="Ok"
+                        android:id="@+id/addTask" android:layout_alignParentEnd="true"
+                        android:layout_margin="@dimen/abc_action_bar_overflow_padding_start_material"/>
+                <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Cancel"
+                        android:id="@+id/cancel_task"
+                        android:layout_alignTop="@+id/addTask" android:layout_toStartOf="@+id/addTask"
+                />
             </RelativeLayout>
 
 
