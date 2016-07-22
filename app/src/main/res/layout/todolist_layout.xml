@@ -34,17 +34,17 @@
         <android.support.v7.widget.Toolbar
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:title="@string/app_name"
+            app:title="To Do List"
             android:id="@+id/todolist_toolbar"
             android:background="@color/primary"
             xmlns:app="http://schemas.android.com/apk/res-auto"
             app:titleTextColor="@color/icons">
         </android.support.v7.widget.Toolbar>
-        <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="My Tasks"
-                android:id="@+id/my_task" android:singleLine="false" android:textSize="@dimen/abc_action_bar_stacked_max_height"/>
+        <!--<TextView-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:text="My Tasks"-->
+                <!--android:id="@+id/my_task" android:singleLine="false" android:textSize="@dimen/abc_action_bar_stacked_max_height"/>-->
         <android.support.design.widget.FloatingActionButton
                 android:layout_width="315dp"
                 android:layout_height="wrap_content"

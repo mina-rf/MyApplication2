@@ -95,7 +95,7 @@ public class PomodoroFragment extends Fragment implements View.OnClickListener, 
 
         Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.pomodoro_toolbar);
         toolbar.inflateMenu(R.menu.pomodoro_menu);
-        toolbar.setTitle(getResources().getString(R.string.app_name));
+        toolbar.setTitle("Pomodoro");
         toolbar.setNavigationIcon(null);
         toolbar.setOnMenuItemClickListener(this);
         return view;

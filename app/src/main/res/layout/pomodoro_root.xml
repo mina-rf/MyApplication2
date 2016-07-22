@@ -10,7 +10,7 @@
         android:id="@+id/pomodoro_toolbar"
         android:background="@color/primary"
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        app:title="@string/app_name"
+        app:title="Pomodoro"
         app:titleTextColor="@color/icons"
         ></android.support.v7.widget.Toolbar>
     <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
