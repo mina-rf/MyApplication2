@@ -60,12 +60,23 @@ public class NewTaskFragment extends Fragment implements AdapterView.OnItemSelec
     LinearLayout timeLayout;
     LinearLayout dateLayout;
 
+    List<String> colors;
+
     boolean inEditMode = false;
     boolean twice = false ;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         setHasOptionsMenu(true);
+
+        colors = new ArrayList<String>();
+        colors.add("Red");
+        colors.add("Orange");
+        colors.add("Yellow");
+        colors.add("Green");
+        colors.add("Blue");
+        colors.add("Pink");
+
         super.onCreate(savedInstanceState);
     }
 
@@ -76,7 +87,6 @@ public class NewTaskFragment extends Fragment implements AdapterView.OnItemSelec
         View view = inflater.inflate(R.layout.newtask_layout, container, false);
         initialize(view);
         showTargetPicker();
-//        EventBus.getDefault().register(this);
         if(getArguments() != null){
             initializeForEdit();
         }
@@ -92,7 +102,7 @@ public class NewTaskFragment extends Fragment implements AdapterView.OnItemSelec
         Bundle info = getArguments();
         name.setText(info.getString(TasksDBHelper.TASK_COLUMN_NAME));
         target.setText(Integer.toString(info.getInt(TasksDBHelper.TASK_COLUMN_TARGET)));
-//        tagSpinner.setSelection(getColorIndex(info.getInt(TasksDBHelper.TASK_COLUMN_TAG)));
+        tagSpinner.setSelection(getColorIndex(info.getInt(TasksDBHelper.TASK_COLUMN_TAG)));
         description.setText(info.getString(TasksDBHelper.TASK_COLUMN_DESCRIPTION));
         System.out.println("hasss : " + info.getInt(TasksDBHelper.TASK_COLUMN_HASDEADLINE));
         if (info.getInt(TasksDBHelper.TASK_COLUMN_HASDEADLINE) == 1){
@@ -107,6 +117,15 @@ public class NewTaskFragment extends Fragment implements AdapterView.OnItemSelec
             time.setText( info.getInt(TasksDBHelper.TASK_COLUMN_DEADLINE_HOUR)+":"
                     + info.getInt(TasksDBHelper.TASK_COLUMN_DEADLINE_MINUTE));
         }
+    }
+
+    private int getColorIndex(int color) {
+
+        for (int i =0 ; i < 7 ; i++ ){
+           if ( getColor(colors.get(i)) == color )
+               return i;
+        }
+        return -1;
     }
 
 
@@ -191,21 +210,13 @@ public class NewTaskFragment extends Fragment implements AdapterView.OnItemSelec
         haveDeadLine = (CheckBox) view.findViewById(R.id.have_deadline);
         haveDeadLine.setOnCheckedChangeListener(this);
 
-
-
-        List<String> colors = new ArrayList<String>();
-        colors.add("Red");
-        colors.add("Orange");
-        colors.add("Yellow");
-        colors.add("Green");
-        colors.add("Blue");
-        colors.add("Pink");
-
         System.out.println("before listnere!");
         tagSpinner.setOnItemSelectedListener(this);
         MyArrayAdapter adapter = new MyArrayAdapter(getActivity() ,colors);
 
         tagSpinner.setAdapter(adapter);
+
+        target.setText("5");
 //        tagSpinner.setPrompt("Select a color tag");
 
     }
@@ -232,8 +243,11 @@ public class NewTaskFragment extends Fragment implements AdapterView.OnItemSelec
             bundle.putString(TasksDBHelper.TASK_COLUMN_DESCRIPTION , String.valueOf(description.getText()));
             bundle.putInt(TasksDBHelper.TASK_COLUMN_HASDEADLINE , haveDeadLine.isChecked() == true ? 1 : 0);
             bundle.putInt("isEdit" , inEditMode == false ? 0 : 1 );
-            bundle.putString("nameBeforeEdit" , getArguments().getString(TasksDBHelper.TASK_COLUMN_NAME));
 
+            if (inEditMode) {
+                bundle.putString("nameBeforeEdit", getArguments().getString(TasksDBHelper.TASK_COLUMN_NAME));
+                bundle.putInt(TasksDBHelper.TASK_COLUMN_DONE, getArguments().getInt(TasksDBHelper.TASK_COLUMN_DONE));
+            }
             fragment.setArguments(bundle);
             FragmentTransaction transaction = getFragmentManager().beginTransaction();
             transaction.replace(R.id.root_frame , fragment);

@@ -66,7 +66,6 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
         Calendar calendar = Calendar.getInstance();
 
         int year = calendar.get(Calendar.YEAR);
-
         int month = calendar.get(Calendar.MONTH);
         int day = calendar.get(Calendar.DAY_OF_MONTH);
 
@@ -74,10 +73,11 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
         values[0] = db.getNumberOfPomodoroInDate(year , month , day);
 
         for(int i = 1 ; i<7 ; i++){
-            calendar.add(Calendar.DATE , -i);
-            values[i]=db.getNumberOfPomodoroInDate(calendar.get(Calendar.YEAR),
-                                                    calendar.get(Calendar.MONTH),
-                                                    calendar.get(Calendar.DAY_OF_MONTH));
+            Calendar cal = Calendar.getInstance();
+            cal.add(Calendar.DATE , -i);
+            values[i]=db.getNumberOfPomodoroInDate(cal.get(Calendar.YEAR),
+                                                    cal.get(Calendar.MONTH),
+                                                    cal.get(Calendar.DAY_OF_MONTH));
         }
 
         System.out.println(Arrays.toString(values));

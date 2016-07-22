@@ -1,10 +1,10 @@
 package com.test.myapplication2.app;
 
-import android.app.ActionBar;
-import android.app.FragmentTransaction;
+import android.app.*;
+import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.support.annotation.Nullable;
 
 import android.support.design.widget.FloatingActionButton;
@@ -15,6 +15,7 @@ import android.widget.*;
 import de.greenrobot.event.EventBus;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -85,6 +86,7 @@ public class ToDoListFragment  extends Fragment implements View.OnClickListener 
         b.putInt(db.TASK_COLUMN_TARGET , info.target);
         b.putInt(db.TASK_COLUMN_TAG , info.color);
         b.putInt(db.TASK_COLUMN_HASDEADLINE , info.hasDeadline ? 1 : 0);
+        b.putInt(db.TASK_COLUMN_DONE , info.done);
 
         NewTaskFragment f = new NewTaskFragment();
         f.setArguments(b);
@@ -126,7 +128,6 @@ public class ToDoListFragment  extends Fragment implements View.OnClickListener 
 
         }
 
-        Log.d("seda shod!", "onCreateView ");
         //draw Views
         list.removeAll(list);
         Cursor c = tasksDB.getAllTasks();
@@ -176,6 +177,7 @@ public class ToDoListFragment  extends Fragment implements View.OnClickListener 
         db.deleteTask(nameBeforEdit);
         System.out.println("deletdd"+nameBeforEdit);
         addNewTaskToDB(arguments);
+        db.setDone(arguments.getString(TasksDBHelper.TASK_COLUMN_NAME) , arguments.getInt(TasksDBHelper.TASK_COLUMN_DONE));
     }
 
     private void changePager() {
@@ -197,6 +199,21 @@ public class ToDoListFragment  extends Fragment implements View.OnClickListener 
                 0 );
 
         System.out.println("year : "+  arguments.getInt(TasksDBHelper.TASK_COLUMN_DEADLINE_YEAR));
+
+        if( arguments.getInt(TasksDBHelper.TASK_COLUMN_DEADLINE_YEAR) != 0){
+            Calendar cal = Calendar.getInstance();
+            cal.set(Calendar.YEAR , arguments.getInt(TasksDBHelper.TASK_COLUMN_DEADLINE_YEAR));
+            cal.set(Calendar.MONTH , arguments.getInt(TasksDBHelper.TASK_COLUMN_DEADLINE_MONTH));
+            cal.set(Calendar.DAY_OF_MONTH , arguments.getInt(TasksDBHelper.TASK_COLUMN_DEADLINE_DAY));
+            cal.set(Calendar.HOUR_OF_DAY ,arguments.getInt(TasksDBHelper.TASK_COLUMN_DEADLINE_HOUR));
+            cal.set(Calendar.MINUTE ,arguments.getInt(TasksDBHelper.TASK_COLUMN_DEADLINE_MINUTE));
+            cal.set(Calendar.SECOND ,0);
+
+            Intent intentAlarm = new Intent(getActivity(), AlarmReceiver.class);
+            intentAlarm.putExtra(TasksDBHelper.TASK_COLUMN_NAME , arguments.getString(TasksDBHelper.TASK_COLUMN_NAME));
+            AlarmManager alarmManager = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
+            alarmManager.set(AlarmManager.RTC_WAKEUP,cal.getTimeInMillis(), PendingIntent.getBroadcast(getActivity(),1,  intentAlarm, PendingIntent.FLAG_UPDATE_CURRENT));
+        }
 
     }
 
@@ -257,4 +274,6 @@ public class ToDoListFragment  extends Fragment implements View.OnClickListener 
         inflater.inflate(R.menu.menu_main,menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
+
+
 }

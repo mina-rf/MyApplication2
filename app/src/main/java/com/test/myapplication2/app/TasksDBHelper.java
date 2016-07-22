@@ -211,9 +211,18 @@ public class TasksDBHelper extends SQLiteOpenHelper {
     }
 
 
+    public void setDone(String name, int done) {
+
+        ContentValues cv = new ContentValues();
+        Cursor c = getTask(name);
+        if (c .moveToFirst()) {
+            cv.put(TASK_COLUMN_DONE, done);
+            System.out.println("done : " +(c.getInt(c.getColumnIndex(TasksDBHelper.TASK_COLUMN_DONE))));
+        }
+
+        SQLiteDatabase db = getWritableDatabase();
+        db.update(TASK_TABLE_NAME, cv, TASK_COLUMN_NAME + "= ?", new String[] {name});
 
 
-
-
-
+    }
 }

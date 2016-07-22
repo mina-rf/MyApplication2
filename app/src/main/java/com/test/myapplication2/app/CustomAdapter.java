@@ -84,23 +84,24 @@ public class CustomAdapter extends BaseAdapter  {
 
         if (textitems.get(position).target <= textitems.get(position).done){
             holder.start.setBackgroundResource(R.mipmap.ic_checkbox_marked_circle_outline_grey600_36dp);
-            holder.taskName.setPaintFlags(holder.taskName.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+//            holder.taskName.setPaintFlags(holder.taskName.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
         }
         else{
             holder.start.setBackgroundResource(R.mipmap.ic_play_grey600_36dp);
+            holder.start.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    EventBus bus = EventBus.getDefault();
+                    bus.post(new StartTaskEvent(textitems.get(pos).taskName));
+
+                }
+            });
         }
 
 
 
-        holder.start.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
 
-                EventBus bus = EventBus.getDefault();
-                bus.post(new StartTaskEvent(textitems.get(pos).taskName));
-
-            }
-        });
 
         return convertView;
     }

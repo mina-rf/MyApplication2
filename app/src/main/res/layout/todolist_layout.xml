@@ -27,7 +27,7 @@
     <!--</RelativeLayout>-->
 
 
-    <LinearLayout
+    <RelativeLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
@@ -36,6 +36,15 @@
                 android:layout_height="wrap_content"
                 android:text="My Tasks"
                 android:id="@+id/my_task" android:singleLine="false" android:textSize="@dimen/abc_action_bar_stacked_max_height"/>
+        <android.support.design.widget.FloatingActionButton
+                android:layout_width="315dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_margin="16dp"
+                android:src="@mipmap/ic_plus_white_24dp"
+                app:layout_anchorGravity="bottom|right|end"
+                android:id="@+id/new_task"
+                android:layout_alignParentEnd="true"/>
         <android.support.design.widget.CoordinatorLayout
                 android:id="@+id/main_content"
                 xmlns:android="http://schemas.android.com/apk/res/android"
@@ -43,23 +52,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-            <ListView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/tasks_listView" android:layout_below="@+id/task_label" android:clickable="true"/>
-
-            <android.support.design.widget.FloatingActionButton
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="bottom|right"
-                    android:layout_margin="16dp"
-                    android:src="@mipmap/ic_plus_white_24dp"
-                    app:layout_anchorGravity="bottom|right|end"
-                    android:id="@+id/new_task"
-                    />
-
         </android.support.design.widget.CoordinatorLayout>
-    </LinearLayout>
+        <ListView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/tasks_listView" android:clickable="true" android:layout_below="@+id/new_task"
+                android:layout_alignParentStart="true"/>
+    </RelativeLayout>
 
 
 </FrameLayout>
