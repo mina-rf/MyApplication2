@@ -4,6 +4,7 @@ package com.test.myapplication2.app;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.support.v13.app.FragmentPagerAdapter;
+import android.support.v13.app.FragmentStatePagerAdapter;
 
 import java.util.Arrays;
 //import android.support.v4.app.FragmentManager;
@@ -32,13 +33,11 @@ public class TabsPagerAdapter extends FragmentPagerAdapter {
         switch (index)
         {
             case 0:
-                return new PomodoroFragment();
+                return new PomodoroRootFragment();
             case 1:
                 return new RootFragment();
             case 2:
                 return new StatisticsFragment();
-            case 3:
-                return new SettingFragment();
         }
 
         return null;
@@ -47,7 +46,7 @@ public class TabsPagerAdapter extends FragmentPagerAdapter {
     @Override
     public int getCount()
     {
-        return 4;
+        return 3;
     }
 
     @Override

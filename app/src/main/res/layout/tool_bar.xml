@@ -3,7 +3,9 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         xmlns:android="http://schemas.android.com/apk/res/android"
-        android:background="@color/primary">
-
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        app:titleTextColor="@color/icons"
+        android:background="@color/primary"
+    android:id="@+id/tool_bar">
 </android.support.v7.widget.Toolbar>
 

@@ -1,5 +1,6 @@
 package com.test.myapplication2.app;
 
+import android.app.FragmentTransaction;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.*;
@@ -13,9 +14,11 @@ import android.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.*;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import de.greenrobot.event.*;
@@ -23,7 +26,7 @@ import de.greenrobot.event.*;
 import java.sql.Time;
 import java.util.Calendar;
 
-public class PomodoroFragment extends Fragment implements View.OnClickListener, View.OnTouchListener {
+public class PomodoroFragment extends Fragment implements View.OnClickListener, View.OnTouchListener,Toolbar.OnMenuItemClickListener {
 
     TimerView timerView;
     long workTime = 10 * 1000;
@@ -43,10 +46,10 @@ public class PomodoroFragment extends Fragment implements View.OnClickListener, 
 
     }
 
-    private void startTimerService() {
+    private void startTimerService(long timerTime) {
         Intent intent = new Intent(getActivity(), TimerService.class);
         intent.setAction("");
-        intent.putExtra("time", time);
+        intent.putExtra("time", timerTime + 50);
         intent.putExtra("isBreak", isBreak);
         intent.putExtra("num", breaksNum);
         getActivity().startService(intent);
@@ -65,7 +68,6 @@ public class PomodoroFragment extends Fragment implements View.OnClickListener, 
         bus.register(this);
         if (!isRunning) onFinishTimer();
         else breakOrWork();
-
         setHasOptionsMenu(true);
 
     }
@@ -73,7 +75,7 @@ public class PomodoroFragment extends Fragment implements View.OnClickListener, 
     public void onEvent(StartTaskEvent event) {
         System.out.println(event.task);
         ((ViewPager) getActivity().findViewById(R.id.pager)).setCurrentItem(0);
-        startTimerService();
+        startTimerService(workTime);
         taskName = event.task;
     }
 
@@ -85,10 +87,17 @@ public class PomodoroFragment extends Fragment implements View.OnClickListener, 
         timerView = (TimerView) view.findViewById(R.id.timeView);
 
         timerView.setOnTouchListener(this);
+//        Toolbar toolbar = (Toolbar) view.findViewById(R.id.tool_bar_p);
         //read the value of Pomodoro from Shared Preferences
         setValues();
 //        breakOrWork();
         drawTimer(time, 0);
+
+        Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.pomodoro_toolbar);
+        toolbar.inflateMenu(R.menu.pomodoro_menu);
+        toolbar.setTitle(getResources().getString(R.string.app_name));
+        toolbar.setNavigationIcon(null);
+        toolbar.setOnMenuItemClickListener(this);
         return view;
 
     }
@@ -131,6 +140,7 @@ public class PomodoroFragment extends Fragment implements View.OnClickListener, 
     }
 
     private void UpdateDB() {
+        System.out.println("here");
         TasksDBHelper db = new TasksDBHelper(getActivity());
 
         Calendar now = Calendar.getInstance();
@@ -189,9 +199,12 @@ public class PomodoroFragment extends Fragment implements View.OnClickListener, 
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_main, menu);
-        super.onCreateOptionsMenu(menu, inflater);
+        menu.clear();
+//        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("Pomodoro");
+        inflater.inflate(R.menu.pomodoro_menu, menu);
+//        super.onCreateOptionsMenu(menu, inflater);
     }
+
 
     @Override
     public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -221,7 +234,7 @@ public class PomodoroFragment extends Fragment implements View.OnClickListener, 
 
     private void timerClicked() {
         if (!isRunning) {
-            startTimerService();
+            startTimerService(time);
         } else {
             //TODO:
             final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
@@ -270,9 +283,22 @@ public class PomodoroFragment extends Fragment implements View.OnClickListener, 
                 ((NotificationManager) getActivity().getSystemService(MainActivity.NOTIFICATION_SERVICE)).cancel(1338);
             }
         });
-
+        alertDialogBuilder.setCancelable(false);
         AlertDialog alertDialog = alertDialogBuilder.create();
         alertDialog.show();
     }
 
+
+    @Override
+    public boolean onMenuItemClick(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.setting_pomodoro_button:
+                FragmentTransaction trans = getFragmentManager().beginTransaction().replace(R.id.pomodoro_root,new SettingFragment()).addToBackStack(null);
+                trans.commit();
+                break;
+            default:
+                break;
+        }
+        return true;
+    }
 }

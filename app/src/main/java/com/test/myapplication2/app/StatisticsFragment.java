@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 //import android.support.v4.app.Fragment;
 import android.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.*;
 import android.widget.NumberPicker;
 import org.eazegraph.lib.charts.BarChart;
@@ -43,8 +45,6 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
 //        mBarChart.
         mBarChart.startAnimation();
 
-
-
         return view;
     }
 
@@ -56,6 +56,8 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        menu.clear();
+//        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("Statistics");
         inflater.inflate(R.menu.menu_main,menu);
         super.onCreateOptionsMenu(menu, inflater);
     }

@@ -432,6 +432,8 @@ public class NewTaskFragment extends Fragment implements AdapterView.OnItemSelec
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        menu.clear();
+//        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("New Task");
         inflater.inflate(R.menu.setting_menu,menu);
         super.onCreateOptionsMenu(menu, inflater);
     }

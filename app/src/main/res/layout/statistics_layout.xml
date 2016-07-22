@@ -3,7 +3,15 @@
               android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="match_parent">
-
+<android.support.v7.widget.Toolbar
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:title="Statistics"
+    android:id="@+id/stat_toolbar"
+    android:background="@color/primary"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:title="@string/app_name"
+    app:titleTextColor="@color/icons"></android.support.v7.widget.Toolbar>
 
     <org.eazegraph.lib.charts.BarChart
             xmlns:app="http://schemas.android.com/apk/res-auto"

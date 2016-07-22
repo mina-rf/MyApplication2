@@ -8,10 +8,13 @@ package com.test.myapplication2.app;
 
 import android.app.ActionBar;
 import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
+import android.support.v7.internal.view.menu.MenuBuilder;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -29,18 +32,31 @@ public class SettingFragment extends PreferenceFragment implements View.OnClickL
         getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
         getPreferenceManager().setDefaultValues(getActivity(), R.xml.preferences_layout, false);
 
+        Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.pomodoro_toolbar);
+        toolbar.setTitle("Setting");
+        toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_keyboard_arrow_left_black_24dp));
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FragmentTransaction trans = getFragmentManager().beginTransaction().replace(R.id.pomodoro_root,new PomodoroFragment());
+                trans.commit();
+            }
+        });
+        Menu menu = toolbar.getMenu();
+        menu.clear();
         Adapter adapter = getPreferenceScreen().getRootAdapter();
         for (int i = 0 ; i < getPreferenceScreen().getRootAdapter().getCount();i++){
             Object object = adapter.getItem(i);
             updatePreference((Preference)object);
         }
         setHasOptionsMenu(true);
-
+        System.out.println("view created");
         
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        menu.clear();
         inflater.inflate(R.menu.setting_menu,menu);
         super.onCreateOptionsMenu(menu, inflater);
     }

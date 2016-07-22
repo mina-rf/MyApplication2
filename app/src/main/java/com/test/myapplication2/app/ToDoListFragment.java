@@ -9,9 +9,12 @@ import android.support.annotation.Nullable;
 
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.*;
 import android.widget.*;
+
 import de.greenrobot.event.EventBus;
 
 import java.util.ArrayList;
@@ -32,8 +35,8 @@ public class ToDoListFragment  extends Fragment implements View.OnClickListener 
     TasksDBHelper tasksDB ;
 
     public void onCreate(Bundle savedInstanceState) {
-        setHasOptionsMenu(true);
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -145,6 +148,7 @@ public class ToDoListFragment  extends Fragment implements View.OnClickListener 
 
                 c.moveToNext();
             }
+
         }
 
 
@@ -271,7 +275,9 @@ public class ToDoListFragment  extends Fragment implements View.OnClickListener 
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_main,menu);
+        menu.clear();
+//        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("To Do List");
+        inflater.inflate(R.menu.setting_menu,menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
