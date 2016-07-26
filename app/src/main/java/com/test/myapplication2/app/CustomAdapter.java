@@ -83,7 +83,7 @@ public class CustomAdapter extends BaseAdapter  {
 //        holder.start.setBackgroundResource(R.mipmap.ic_play_grey600_48dp);
 
         if (textitems.get(position).target <= textitems.get(position).done){
-            holder.start.setBackgroundResource(R.mipmap.ic_checkbox_marked_circle_outline_grey600_36dp);
+            holder.start.setBackgroundResource(R.mipmap.ic_check_grey600_24dp);
 //            holder.taskName.setPaintFlags(holder.taskName.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
         }
         else{

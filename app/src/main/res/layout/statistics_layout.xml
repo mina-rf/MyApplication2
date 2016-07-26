@@ -13,17 +13,31 @@
     app:title="Statistics"
     app:titleTextColor="@color/icons"></android.support.v7.widget.Toolbar>
 
-    <org.eazegraph.lib.charts.BarChart
-            xmlns:app="http://schemas.android.com/apk/res-auto"
-            android:id="@+id/barchart"
+    <LinearLayout
+            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="256dp"
-            android:padding="10dp"
-            app:egFixedBarWidth="true"
-            app:egBarWidth="15dp"
-            app:egLegendHeight="40dp"
-            app:egBarMargin="5dp"
-            app:egVisibleBars="7"/>
+            android:layout_height="match_parent">
+        <org.eazegraph.lib.charts.BarChart
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/barchart"
+                android:layout_width="match_parent"
+                android:layout_height="240dp"
+                android:padding="10dp"
+                app:egFixedBarWidth="true"
+                app:egBarWidth="15dp"
+                app:egLegendHeight="40dp"
+                app:egBarMargin="5dp"
+                app:egVisibleBars="7"/>
+        <org.eazegraph.lib.charts.PieChart
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/piechart"
+                android:layout_width="match_parent"
+                android:layout_height="280dp"
+                android:padding="8dp"
+                app:egLegendTextSize="18sp"
+                app:egUsePieRotation="true"
+                app:egValueTextSize="36sp"/>
+    </LinearLayout>
 
 
 </LinearLayout>

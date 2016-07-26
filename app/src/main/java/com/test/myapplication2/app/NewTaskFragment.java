@@ -65,6 +65,14 @@ public class NewTaskFragment extends Fragment implements AdapterView.OnItemSelec
     boolean inEditMode = false;
     boolean twice = false ;
 
+    public static int RED =Color.parseColor("#DC143C");
+    public static int ORANGE = Color.parseColor("#FF8C00");
+    public static int YELLOW = Color.parseColor("#FFD700");
+    public static int BLUE = Color.parseColor("#00BFFF");
+    public static int PINK = Color.parseColor("#FF69B4");
+    public static int GREEN = Color.parseColor("#32CD32");
+
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         setHasOptionsMenu(true);

@@ -13,8 +13,6 @@ import java.util.Calendar;
  */
 public class TasksDBHelper extends SQLiteOpenHelper {
     public static final String DATABASE_NAME = "Data.db";
-    private static final int DATABASE_VERSION = 2;
-
     public static final String TASK_TABLE_NAME = "tasks";
     public static final String TASK_COLUMN_NAME = "name";
     public static final String TASK_COLUMN_DEADLINE_YEAR = "deadline_year";
@@ -27,10 +25,10 @@ public class TasksDBHelper extends SQLiteOpenHelper {
     public static final String TASK_COLUMN_TARGET = "target";
     public static final String TASK_COLUMN_DONE = "done";
     public static final String TASK_COLUMN_HASDEADLINE = "hasdeadline";
-
     public static  final String POMODORO_TABLE_NAME = "pomodoros";
     public static final String POMODORO_COLUMN_NUMBER =  "number";
     public static final String POMODORO_COLUMN_DATE = "Data";
+    private static final int DATABASE_VERSION = 2;
 
 
 
@@ -224,5 +222,18 @@ public class TasksDBHelper extends SQLiteOpenHelper {
         db.update(TASK_TABLE_NAME, cv, TASK_COLUMN_NAME + "= ?", new String[] {name});
 
 
+    }
+    int getNumberOfPomodoroWithTag (int color){
+
+        SQLiteDatabase db = getWritableDatabase() ;
+        Cursor c = db.rawQuery("SELECT * FROM " + TASK_TABLE_NAME + " WHERE "+TASK_COLUMN_TAG + " =? " , new String[]{Integer.toString(color)});
+        int sum = 0;
+        if (c.moveToFirst())
+            while (c.isAfterLast() == false){
+                 sum += c.getInt(c.getColumnIndex(TASK_COLUMN_DONE));
+                 c.moveToNext();
+                 System.out.println("loop?");
+            }
+        return sum;
     }
 }

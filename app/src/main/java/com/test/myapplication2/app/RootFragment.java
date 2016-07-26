@@ -30,6 +30,7 @@ public class RootFragment extends Fragment{
 
         transaction.commitAllowingStateLoss();
 
+        
         return view;
     }
 

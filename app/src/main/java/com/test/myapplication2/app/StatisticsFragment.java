@@ -1,6 +1,7 @@
 package com.test.myapplication2.app;
 
 import android.database.Cursor;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 //import android.support.v4.app.Fragment;
@@ -10,7 +11,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.*;
 import android.widget.NumberPicker;
 import org.eazegraph.lib.charts.BarChart;
+import org.eazegraph.lib.charts.PieChart;
 import org.eazegraph.lib.models.BarModel;
+import org.eazegraph.lib.models.PieModel;
 
 import java.util.Arrays;
 import java.util.Calendar;
@@ -44,6 +47,18 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
 
 //        mBarChart.
         mBarChart.startAnimation();
+
+        int stat[] = getTagStats();
+        PieChart mPieChart = (PieChart) view.findViewById(R.id.piechart);
+
+        mPieChart.addPieSlice(new PieModel("Red", stat[0], NewTaskFragment.RED));
+        mPieChart.addPieSlice(new PieModel("Blue", stat[1], NewTaskFragment.BLUE));
+        mPieChart.addPieSlice(new PieModel("Orange", stat[2], NewTaskFragment.ORANGE));
+        mPieChart.addPieSlice(new PieModel("Pink", stat[3], NewTaskFragment.PINK));
+        mPieChart.addPieSlice(new PieModel("Yellow", stat[4], NewTaskFragment.YELLOW));
+        mPieChart.addPieSlice(new PieModel("Green", stat[5], NewTaskFragment.GREEN));
+
+        mPieChart.startAnimation();
 
         return view;
     }
@@ -85,5 +100,19 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
         System.out.println(Arrays.toString(values));
         return values;
 
+    }
+
+    private int[] getTagStats (){
+
+        int ans[] = new int[6];
+        TasksDBHelper db =new TasksDBHelper(getActivity());
+        ans[0] = db.getNumberOfPomodoroWithTag(NewTaskFragment.RED);
+        ans[1] = db.getNumberOfPomodoroWithTag(NewTaskFragment.BLUE);
+        ans[2] = db.getNumberOfPomodoroWithTag(NewTaskFragment.ORANGE);
+        ans[3] = db.getNumberOfPomodoroWithTag(NewTaskFragment.PINK);
+        ans[4] = db.getNumberOfPomodoroWithTag(NewTaskFragment.YELLOW);
+        ans[5] = db.getNumberOfPomodoroWithTag(NewTaskFragment.GREEN);
+
+        return ans;
     }
 }

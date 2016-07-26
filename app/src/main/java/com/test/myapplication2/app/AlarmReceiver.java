@@ -44,7 +44,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 
                 NotificationManager notif=(NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
                 Notification notify=new Notification.Builder(context).setContentTitle("Reminder For Task")
-                        .setContentText(name).setSmallIcon(R.mipmap.ic_alarm_check_grey600_24dp).build();
+                        .setContentText(name).setSmallIcon(R.mipmap.ic_launcher).build();
 
                 notif.notify(123, notify);
 
