@@ -5,6 +5,8 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v13.app.FragmentStatePagerAdapter;
+import android.view.View;
+import android.view.ViewGroup;
 
 import java.util.Arrays;
 //import android.support.v4.app.FragmentManager;
@@ -24,8 +26,15 @@ public class TabsPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getItemPosition(Object object) {
+//        Fragment fragment = (Fragment) object;
+//        if(fragment instanceof  PomodoroRootFragment){
+//            System.out.println("possssiiii");
+//            return POSITION_UNCHANGED;
+//        }
         return POSITION_NONE;
     }
+
+
 
     @Override
     public Fragment getItem(int index)

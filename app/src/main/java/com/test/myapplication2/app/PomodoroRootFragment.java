@@ -23,6 +23,8 @@ public class PomodoroRootFragment extends Fragment {
 
         transaction.commitAllowingStateLoss();
 
+        System.out.println("Salammmmmmmmmmmmm");
+
         return view;
     }
 }

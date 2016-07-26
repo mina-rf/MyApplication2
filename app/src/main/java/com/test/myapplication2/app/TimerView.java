@@ -76,7 +76,7 @@ public class TimerView extends View  {
 //        super.onDraw(canvas);
         Paint p = new Paint();
         p.setStyle(Paint.Style.STROKE);
-        p.setColor(getResources().getColor(R.color.primary_light));
+        p.setColor(getResources().getColor(R.color.accent_light));
         final RectF oval = new RectF();
 
         r = 2 * width / 5;
@@ -89,7 +89,7 @@ public class TimerView extends View  {
 //        angle = 90;
         p.setStrokeWidth(width/70);
         canvas.drawArc(oval, 270, angle, false, p);
-        p.setColor(getResources().getColor(R.color.primary_dark));
+        p.setColor(getResources().getColor(R.color.accent));
         canvas.drawArc(oval, 270 + angle, 360 - angle, false, p);
 
         Paint textPaint = new Paint();

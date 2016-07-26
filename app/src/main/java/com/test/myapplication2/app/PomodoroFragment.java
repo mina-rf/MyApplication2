@@ -26,9 +26,10 @@ import de.greenrobot.event.*;
 import java.sql.Time;
 import java.util.Calendar;
 
-public class PomodoroFragment extends Fragment implements View.OnClickListener, View.OnTouchListener,Toolbar.OnMenuItemClickListener {
+public class PomodoroFragment extends Fragment implements View.OnClickListener, View.OnTouchListener, Toolbar.OnMenuItemClickListener {
 
     TimerView timerView;
+    ViewPager pager;
     long workTime = 10 * 1000;
     long shortBreakTime = 5 * 1000;
     long longBreakTime = 7 * 1000;
@@ -60,23 +61,64 @@ public class PomodoroFragment extends Fragment implements View.OnClickListener, 
     public void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        //registering broadcast receiver
         getActivity().registerReceiver(broadcastReceiver, new IntentFilter(TimerService.BROADCAST_TIME));
+
+        //registering broadcast receiver
         isBreak = getActivity().getIntent().getBooleanExtra("salam", false);
         breaksNum = getActivity().getIntent().getIntExtra("num", 0);
         isRunning = getActivity().getIntent().getBooleanExtra("run", false);
         bus.register(this);
-        if (!isRunning) onFinishTimer();
+        if (!isRunning) onFinishTimer(getActivity());
         else breakOrWork();
         setHasOptionsMenu(true);
 
     }
 
-    public void onEvent(StartTaskEvent event) {
-        System.out.println(event.task);
-        ((ViewPager) getActivity().findViewById(R.id.pager)).setCurrentItem(0);
-        startTimerService(workTime);
-        taskName = event.task;
+    @Override
+    public void onPause() {
+        getActivity().unregisterReceiver(broadcastReceiver);
+        super.onPause();
+
+    }
+
+    @Override
+    public void onResume() {
+        getActivity().registerReceiver(broadcastReceiver, new IntentFilter(TimerService.BROADCAST_TIME));
+        super.onResume();
+    }
+//    public void onEventMainThread(MyEvent event){
+//        editText1.setText(event.getString());
+//    }
+    public void onEventMainThread(final StartTaskEvent event) {
+        if (isRunning) {
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+            alertDialogBuilder.setMessage("You are running a pomodoro, Do you wish to start over?");
+
+            alertDialogBuilder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    getActivity().stopService(new Intent(getActivity(),TimerService.class));
+                    ((ViewPager) getActivity().findViewById(R.id.pager)).setCurrentItem(0);
+                    startTimerService(workTime);
+                    taskName = event.task;
+                }
+            });
+            alertDialogBuilder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    dialogInterface.cancel();
+                }
+            });
+            alertDialogBuilder.setCancelable(false);
+            AlertDialog alertDialog = alertDialogBuilder.create();
+            alertDialog.show();
+        } else {
+            System.out.println(event.task);
+            ((ViewPager)getActivity().findViewById(R.id.pager)).setCurrentItem(0);
+            isBreak = false;
+            startTimerService(workTime);
+            taskName = event.task;
+        }
     }
 
     @Nullable
@@ -87,6 +129,7 @@ public class PomodoroFragment extends Fragment implements View.OnClickListener, 
         timerView = (TimerView) view.findViewById(R.id.timeView);
 
         timerView.setOnTouchListener(this);
+        pager =(ViewPager) view.findViewById(R.id.pager);
 //        Toolbar toolbar = (Toolbar) view.findViewById(R.id.tool_bar_p);
         //read the value of Pomodoro from Shared Preferences
         setValues();
@@ -113,18 +156,17 @@ public class PomodoroFragment extends Fragment implements View.OnClickListener, 
 
     @Override
     public void onDestroy() {
-        getActivity().unregisterReceiver(broadcastReceiver);
         super.onDestroy();
     }
 
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            updateUI(intent);
+            updateUI(context, intent);
         }
     };
 
-    private void updateUI(Intent intent) {
+    private void updateUI(Context context, Intent intent) {
         long l = intent.getLongExtra("counter", 0L);
         int angle = 360 - (int) ((l / 1000 * 1000) * 360 / time);
         drawTimer(l, angle);
@@ -132,16 +174,16 @@ public class PomodoroFragment extends Fragment implements View.OnClickListener, 
         if (angle == 360) {
             isBreak = intent.getBooleanExtra("isBreak", false);
             isRunning = intent.getBooleanExtra("run", false);
-            onFinishTimer();
+            onFinishTimer(context);
             drawTimer(time, 0);
-            String text = isBreak ? getString(R.string.break_time_message) : getString(R.string.work_time_message);
-            showDialog(text);
+            String text = isBreak ? context.getString(R.string.work_time_message) :context.getString(R.string.break_time_message);
+            showDialog(context,text);
         }
     }
 
-    private void UpdateDB() {
+    private void UpdateDB(Context context) {
         System.out.println("here");
-        TasksDBHelper db = new TasksDBHelper(getActivity());
+        TasksDBHelper db = new TasksDBHelper(context);
 
         Calendar now = Calendar.getInstance();
         int year = now.get(Calendar.YEAR);
@@ -158,7 +200,8 @@ public class PomodoroFragment extends Fragment implements View.OnClickListener, 
         }
         if (taskName != null) {
             db.addDone(taskName);
-            ((ViewPager) getActivity().findViewById(R.id.pager)).getAdapter().notifyDataSetChanged();
+//            if (isAdded())
+                ((ViewPager) getActivity().findViewById(R.id.pager)).getAdapter().notifyDataSetChanged();
             taskName = null;
         }
     }
@@ -183,7 +226,7 @@ public class PomodoroFragment extends Fragment implements View.OnClickListener, 
     private void drawTimer(long time, int angle) {
         timerView.setAngle(angle);
         if (time == this.time)
-            timerView.setTime(getString(R.string.start_timer));
+            timerView.setTime("Start!");
         else
             timerView.setTime(getTime(time));
         timerView.invalidate();
@@ -264,23 +307,24 @@ public class PomodoroFragment extends Fragment implements View.OnClickListener, 
         }
     }
 
-    private void onFinishTimer() {
+    private void onFinishTimer(Context context) {
         if (isBreak) {
             breaksNum++;
-            UpdateDB();
+            UpdateDB(context);
         }
         breakOrWork();
 
     }
 
-    private void showDialog(String message) {
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+    private void showDialog(final Context context, String message) {
+//        if(!isAdded()) return;
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
         alertDialogBuilder.setMessage(message);
 
         alertDialogBuilder.setNeutralButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                ((NotificationManager) getActivity().getSystemService(MainActivity.NOTIFICATION_SERVICE)).cancel(1338);
+                ((NotificationManager) context.getSystemService(MainActivity.NOTIFICATION_SERVICE)).cancel(1338);
             }
         });
         alertDialogBuilder.setCancelable(false);
@@ -291,9 +335,9 @@ public class PomodoroFragment extends Fragment implements View.OnClickListener, 
 
     @Override
     public boolean onMenuItemClick(MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.setting_pomodoro_button:
-                FragmentTransaction trans = getFragmentManager().beginTransaction().replace(R.id.pomodoro_root,new SettingFragment()).addToBackStack(null);
+                FragmentTransaction trans = getFragmentManager().beginTransaction().replace(R.id.pomodoro_root, new SettingFragment()).addToBackStack(null);
                 trans.commit();
                 break;
             default:

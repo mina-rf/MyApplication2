@@ -42,7 +42,6 @@ public class TimerService extends Service {
             @Override
             public void onTick(long l) {
                 myintent.putExtra("counter", l);
-                System.out.println("time = "+l);
                 sendBroadcast(myintent);
                 updateNotification(l);
                 isRunnig = true;
