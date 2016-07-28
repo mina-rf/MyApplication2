@@ -340,6 +340,19 @@ public class PomodoroFragment extends Fragment implements View.OnClickListener, 
                 FragmentTransaction trans = getFragmentManager().beginTransaction().replace(R.id.pomodoro_root, new SettingFragment()).addToBackStack(null);
                 trans.commit();
                 break;
+            case R.id.info_pomodoro_button:
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+                alertDialogBuilder.setMessage("The Pomodoro Technique is a time management method developed by Francesco Cirillo in the late 1980s. The technique uses a timer to break down work into intervals, traditionally 25 minutes in length, separated by short breaks. These intervals are named pomodoros, the plural in English of the Italian word pomodoro (tomato), after the tomato-shaped kitchen timer that Cirillo used as a university student. The method is based on the idea that frequent breaks can improve mental agility.");
+
+                alertDialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.cancel();
+                    }
+                });
+                AlertDialog alertDialog = alertDialogBuilder.create();
+                alertDialog.show();
+                break;
             default:
                 break;
         }

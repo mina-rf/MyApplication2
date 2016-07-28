@@ -8,6 +8,7 @@ package com.test.myapplication2.app;
 
 import android.app.ActionBar;
 import android.app.Fragment;
+import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -38,8 +39,10 @@ public class SettingFragment extends PreferenceFragment implements View.OnClickL
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                FragmentTransaction trans = getFragmentManager().beginTransaction().replace(R.id.pomodoro_root,new PomodoroFragment());
-                trans.commit();
+
+//                FragmentTransaction trans = getFragmentManager().beginTransaction().replace(R.id.pomodoro_root,new PomodoroFragment());
+//                trans.commit();
+                    getFragmentManager().popBackStack();
             }
         });
         Menu menu = toolbar.getMenu();
