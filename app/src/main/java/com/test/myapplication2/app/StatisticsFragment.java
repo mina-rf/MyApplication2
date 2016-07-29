@@ -3,6 +3,7 @@ package com.test.myapplication2.app;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 //import android.support.v4.app.Fragment;
 import android.app.Fragment;
@@ -34,16 +35,17 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
         View view = inflater.inflate(R.layout.statistics_layout, container, false);
 
         int values[] = getBarValues();
+        String days[] = getDays();
         BarChart mBarChart = (BarChart) view.findViewById(R.id.barchart);
 
 
-        mBarChart.addBar(new BarModel(values[6],  0xFF343456));
-        mBarChart.addBar(new BarModel(values[5], 0xFF563456));
-        mBarChart.addBar(new BarModel(values[4], 0xFF873F56));
-        mBarChart.addBar(new BarModel(values[3], 0xFF56B7F1));
-        mBarChart.addBar(new BarModel(values[2],  0xFF343456));
-        mBarChart.addBar(new BarModel(values[1], 0xFF1FF4AC));
-        mBarChart.addBar(new BarModel(values[0],  0xFF1BA4E6));
+        mBarChart.addBar(new BarModel(days[6] ,values[6],  0xFFFFCC80 ));
+        mBarChart.addBar(new BarModel(days[5] ,values[5], 0xFFFFB74D));
+        mBarChart.addBar(new BarModel(days[4] ,values[4], 0xFFFFA726));
+        mBarChart.addBar(new BarModel(days[3] ,values[3], 0xFFFF9800));
+        mBarChart.addBar(new BarModel(days[2] ,values[2],  0xFFFB8C00));
+        mBarChart.addBar(new BarModel(days[1] ,values[1], 0xFFF57C00));
+        mBarChart.addBar(new BarModel(days[0] ,values[0],  0xFFEF6C00));
 
 //        mBarChart.
         mBarChart.startAnimation();
@@ -114,5 +116,19 @@ public class StatisticsFragment extends Fragment implements View.OnClickListener
         ans[5] = db.getNumberOfPomodoroWithTag(NewTaskFragment.GREEN);
 
         return ans;
+    }
+
+    private String[] getDays(){
+
+        String[] days = new String[7];
+        String[] namesOfDays =  {"SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"};
+        for (int i=0 ; i <7 ; i++){
+            Calendar cal = Calendar.getInstance();
+            cal.add(Calendar.DATE , -i);
+            days[i] =namesOfDays[cal.get(Calendar.DAY_OF_WEEK)-1];
+        }
+
+        System.out.println(Arrays.toString(days));
+        return days;
     }
 }

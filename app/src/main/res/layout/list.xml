@@ -19,7 +19,7 @@
                 android:id="@+id/task_label" android:layout_alignParentStart="true"
                 android:layout_alignParentEnd="false"/>
         <TextView
-                android:layout_width="200dp"
+                android:layout_width="250dp"
                 android:layout_height="wrap_content"
                 android:text="New Text"
                 android:id="@+id/task_name_inlist" android:layout_toEndOf="@id/task_label"
@@ -39,7 +39,7 @@
                 android:text="New Text"
                 android:id="@+id/task_target_done"
                 android:layout_alignTop="@+id/task_name_inlist"
-                android:layout_centerVertical="true" android:layout_toStartOf="@id/task_start"/>
+                android:layout_centerVertical="true" android:layout_toEndOf="@id/task_name_inlist"/>
 
     </RelativeLayout>
 </LinearLayout>

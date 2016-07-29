@@ -23,7 +23,7 @@
                         android:layout_height="wrap_content"
                         android:id="@+id/task_name" android:autoText="false"
                         android:hint="Title"
-                        android:textSize="@dimen/abc_action_button_min_width_overflow_material"
+                        android:textSize="@dimen/abc_dialog_padding_material"
                         android:layout_marginLeft="@dimen/abc_action_bar_content_inset_material"/>
             </LinearLayout>
             <LinearLayout
@@ -42,7 +42,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:id="@+id/target_picker" android:hint="5"
-                        android:textSize="@dimen/abc_action_bar_content_inset_material"/>
+                        android:textSize="20dp"/>
             </LinearLayout>
             <LinearLayout
                     android:orientation="vertical"
@@ -52,7 +52,8 @@
                 <LinearLayout
                         android:orientation="horizontal"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent">
+                        android:layout_height="match_parent"
+                        android:layout_margin="@dimen/abc_action_bar_content_inset_material">
                     <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -60,13 +61,13 @@
                             android:id="@+id/textView12"
                             android:textSize="@dimen/abc_action_bar_content_inset_material"
                             android:layout_gravity="center"
-                            android:layout_marginLeft="@dimen/abc_action_bar_content_inset_material"/>
+                    />
                     <Spinner
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:id="@+id/task_tag" android:spinnerMode="dialog"
                             android:focusable="true" android:longClickable="false"
-                            android:layout_marginTop="@dimen/abc_action_bar_content_inset_material"/>
+                    />
                 </LinearLayout>
                 <EditText
                         android:layout_width="wrap_content"
@@ -74,8 +75,7 @@
                         android:id="@+id/task_description" android:hint="More Description"
                         android:textSize="@dimen/abc_action_bar_content_inset_material"
                         android:layout_marginBottom="@dimen/abc_action_bar_content_inset_material"
-                        android:layout_marginLeft="@dimen/abc_action_bar_content_inset_material"
-                        android:layout_marginTop="@dimen/abc_action_bar_content_inset_material"/>
+                        android:layout_margin="@dimen/abc_action_bar_content_inset_material"/>
             </LinearLayout>
 
             <LinearLayout
