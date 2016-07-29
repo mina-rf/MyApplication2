@@ -1,0 +1,44 @@
+<resources>
+
+        <!-- Base application theme. -->
+        <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+                <!-- Customize your theme here. -->
+                <item name="colorAccent">@color/accent</item>
+                <item name="colorPrimary">@color/primary</item>
+                <item name="colorPrimaryDark">@color/primary_dark</item>
+                <item name="alertDialogTheme">@style/AppCompatAlertDialogStyle</item>
+                <item name="android:datePickerDialogTheme">@style/MyDatePickerDialogTheme</item>
+                <item name="android:timePickerDialogTheme">@style/MyTimePickerDialogTheme</item>
+        </style>
+
+        <style name="AppCompatAlertDialogStyle" parent="Theme.AppCompat.Light.Dialog.Alert">
+                <item name="colorAccent">@color/accent</item>
+                <!--<item name="android:textColorPrimary">@color/primary_dark</item>-->
+        </style>
+
+
+        <style name="MyDatePickerDialogTheme" parent="Theme.AppCompat.Light.Dialog">
+                <!--<item name="android:datePickerStyle">@style/MyDatePickerStyle</item>-->
+                <item name="android:headerBackground">@color/primary</item>
+                <item name="colorAccent">@color/accent</item>
+                <item name="colorPrimary">@color/primary</item>
+                <item name="colorPrimaryDark">@color/primary_dark</item>
+        </style>
+
+        <style name="MyTimePickerDialogTheme" parent="Theme.AppCompat.Light.Dialog">
+                <!--<item name="android:datePickerStyle">@style/MyDatePickerStyle</item>-->
+                <item name="android:headerBackground">@color/primary</item>
+                <item name="colorAccent">@color/accent</item>
+                <item name="colorPrimary">@color/primary</item>
+                <item name="colorPrimaryDark">@color/primary_dark</item>
+        </style>
+
+
+        <!--<style name="MyDatePickerStyle" parent="@android:style/Widget.Material.Light.DatePicker">-->
+        <!--<item name="android:headerBackground">@color/primary</item>-->
+        <!--<item name="colorAccent">@color/accent</item>-->
+        <!--<item name="colorPrimary">@color/primary</item>-->
+        <!--<item name="colorPrimaryDark">@color/primary_dark</item>-->
+        <!--</style>-->
+
+</resources>
