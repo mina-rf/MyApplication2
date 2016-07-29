@@ -86,7 +86,7 @@
                 <CheckBox
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Remind me near deadline"
+                        android:text="Remind me "
                         android:id="@+id/have_deadline"
                         android:layout_marginLeft="@dimen/abc_action_bar_content_inset_material"/>
             </LinearLayout>

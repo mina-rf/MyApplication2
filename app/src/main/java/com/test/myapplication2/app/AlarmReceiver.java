@@ -9,6 +9,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.media.RingtoneManager;
+import android.net.Uri;
 
 import java.util.Calendar;
 
@@ -44,9 +46,10 @@ public class AlarmReceiver extends BroadcastReceiver {
 
                 NotificationManager notif=(NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
                 Notification notify=new Notification.Builder(context).setContentTitle("Reminder For Task")
-                        .setContentText(name).setSmallIcon(R.mipmap.ic_launcher).build();
-
-                notif.notify(123, notify);
+                        .setContentText(name).setSmallIcon(R.mipmap.ic_launcher).setDefaults(Notification.DEFAULT_SOUND).build();
+//                Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+//                builder.setSound(alarmSound);
+                notif.notify(102, notify);
 
 
             }

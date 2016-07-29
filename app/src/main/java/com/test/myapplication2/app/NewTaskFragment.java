@@ -7,6 +7,8 @@ import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.*;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.text.InputType;
 import android.util.Log;
@@ -277,11 +279,6 @@ public class NewTaskFragment extends Fragment implements AdapterView.OnItemSelec
 
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-//        String item = adapterView.getItemAtPosition(i).toString();
-//
-        // Showing selected spinner item
-        System.out.println("hahahahahahahahha");
-        Toast.makeText(adapterView.getContext(), "Selected: " , Toast.LENGTH_LONG).show();
 
     }
 
@@ -349,6 +346,11 @@ public class NewTaskFragment extends Fragment implements AdapterView.OnItemSelec
         timeLayout.setOrientation(LinearLayout.HORIZONTAL);
         timeLayout.addView(timeTV);
         timeLayout.addView(time);
+
+        LinearLayout.LayoutParams params =  new LinearLayout.LayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT , ViewGroup.LayoutParams.WRAP_CONTENT));
+        params.setMargins(0,0,16,0);
+        dateLayout.setLayoutParams(params);
+        timeLayout.setLayoutParams(params);
 
         layout.addView(dateLayout , 1);
         layout.addView(timeLayout , 2);
