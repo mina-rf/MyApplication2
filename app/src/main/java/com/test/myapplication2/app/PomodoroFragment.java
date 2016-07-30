@@ -62,6 +62,7 @@ public class PomodoroFragment extends Fragment implements View.OnClickListener, 
 
         super.onCreate(savedInstanceState);
         getActivity().registerReceiver(broadcastReceiver, new IntentFilter(TimerService.BROADCAST_TIME));
+        setValues();
 
         //registering broadcast receiver
         isBreak = getActivity().getIntent().getBooleanExtra("salam", false);
@@ -132,7 +133,6 @@ public class PomodoroFragment extends Fragment implements View.OnClickListener, 
         pager =(ViewPager) view.findViewById(R.id.pager);
 //        Toolbar toolbar = (Toolbar) view.findViewById(R.id.tool_bar_p);
         //read the value of Pomodoro from Shared Preferences
-        setValues();
 //        breakOrWork();
         drawTimer(time, 0);
 
@@ -147,11 +147,12 @@ public class PomodoroFragment extends Fragment implements View.OnClickListener, 
 
     private void setValues() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        int time = preferences.getInt("work_interval", 9);
-        int breakT = preferences.getInt("short_break", 2);
-//        breaksInRow = preferences.getInt("breaks_num", 2);
-//        workTime = time * 60 * 1000 * 5;
-//        shortBreakTime = breakT * 60 * 1000 * 5;
+        int time = preferences.getInt("work_interval", 25);
+        int breakT = preferences.getInt("short_break", 5);
+        int longBreak = preferences.getInt("long_break",15);
+        breaksInRow = preferences.getInt("breaks_num", 4);
+        workTime = time * 60 * 1000 ;
+        shortBreakTime = breakT * 60 * 1000 ;
     }
 
     @Override
