@@ -64,10 +64,15 @@ public class PomodoroFragment extends Fragment implements View.OnClickListener, 
         getActivity().registerReceiver(broadcastReceiver, new IntentFilter(TimerService.BROADCAST_TIME));
         setValues();
 
+        if (savedInstanceState == null) System.out.println("is nuuuuuuulllllll");
+
+
+
         //registering broadcast receiver
         isBreak = getActivity().getIntent().getBooleanExtra("salam", false);
         breaksNum = getActivity().getIntent().getIntExtra("num", 0);
-        isRunning = getActivity().getIntent().getBooleanExtra("run", false);
+//        isRunning = getActivity().getIntent().getBooleanExtra("run", false);
+        isRunning = TimerService.isRunnig;
         bus.register(this);
         if (!isRunning) onFinishTimer(getActivity());
         else breakOrWork();
@@ -153,6 +158,7 @@ public class PomodoroFragment extends Fragment implements View.OnClickListener, 
         breaksInRow = preferences.getInt("breaks_num", 4);
         workTime = time * 60 * 1000 ;
         shortBreakTime = breakT * 60 * 1000 ;
+        longBreakTime = longBreak * 60 * 1000;
     }
 
     @Override

@@ -24,7 +24,7 @@ public class TimerService extends Service {
     CountDownTimer timer;
     boolean isBreak;
     int num;
-    boolean isRunnig;
+    static boolean isRunnig;
 
 
     @Override

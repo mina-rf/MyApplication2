@@ -26,11 +26,11 @@ public class TabsPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getItemPosition(Object object) {
-//        Fragment fragment = (Fragment) object;
-//        if(fragment instanceof  PomodoroRootFragment){
-//            System.out.println("possssiiii");
-//            return POSITION_UNCHANGED;
-//        }
+        Fragment fragment = (Fragment) object;
+        if(fragment instanceof  PomodoroRootFragment){
+            System.out.println("possssiiii");
+            return POSITION_UNCHANGED;
+        }
         return POSITION_NONE;
     }
 
